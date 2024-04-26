@@ -1,0 +1,22 @@
+{
+    "eslint.options": {
+        "overrideConfigFile": "./.eslintrc.json"
+    },
+    "eslint.enable": true, // 是否开启检测
+    // "eslint.autoFixOnSave": true,
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "jsx",
+        "tsx",
+        "typescriptreact",
+        "html",
+        "vue",
+        "markdown",
+        "json"
+    ],
+     "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "always"
+    },
+}
