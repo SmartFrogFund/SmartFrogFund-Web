@@ -12,5 +12,19 @@ class MainStore {
     return `hello ${this.name}`;
   }
 }
+class SubStore {
+  @observable name: string = "ggg";
 
-export default new MainStore();
+  @action
+  changeName = (newName: string): void => {
+    this.name = newName;
+  };
+
+  @computed get hello() {
+    return `hello ${this.name}`;
+  }
+}
+const mainStore = new MainStore();
+const subStore = new SubStore();
+
+export { mainStore, subStore };

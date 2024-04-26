@@ -2,11 +2,14 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button, Flex } from "antd";
 import { observer } from "mobx-react";
-import mainStore from "../stores/main.store";
+import {mainStore,subStore} from "../stores/main.store";
 
 const Page = observer(() => {
   const handleChangeName = () => {
     mainStore.changeName("gony");
+  };
+  const handleChangeName2 = () => {
+    subStore.changeName("ethan");
   };
 
   return (
@@ -27,12 +30,12 @@ const Page = observer(() => {
         <ConnectButton />
       </div>
 
-      <div className="">{mainStore.hello}</div>
+      <div className="">{mainStore.hello}@@@@@{subStore.hello}</div>
       <Flex gap="small" wrap="wrap">
         <Button type="primary" onClick={handleChangeName}>
           Primary Button
         </Button>
-        <Button>Default Button</Button>
+        <Button onClick={handleChangeName2}>Default Button</Button>
         <Button type="dashed">Dashed Button</Button>
         <Button type="text">Text Button</Button>
         <Button type="link">Link Button</Button>
