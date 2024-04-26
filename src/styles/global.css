@@ -12,9 +12,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-div[data-rk] {
-  height:100%;
-    width:100%;
+
+body > [data-rk] {
+  @apply flex flex-col h-full;
 }
 body,html{
     height:100%;

@@ -8,6 +8,7 @@ const Page = observer(() => {
   const handleChangeName = () => {
     mainStore.changeName("gony");
   };
+
   return (
     <div
       className="h-full"
