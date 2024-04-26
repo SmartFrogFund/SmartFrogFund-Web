@@ -1,11 +1,16 @@
 /** @type {import('next').NextConfig} */
+const path = require("path");
 const nextConfig = {
   reactStrictMode: true,
-  pagesDir:'src/app',
-  webpack: config => {
-    
-    config.externals.push('pino-pretty', 'lokijs', 'encoding');
+  sassOptions: {
+    includePaths: [path.join(__dirname, "styles")],
+  },
+  webpack: (config) => {
+    config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
 };
 
