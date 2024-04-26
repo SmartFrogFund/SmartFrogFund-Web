@@ -1,5 +1,6 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectButton} from '@rainbow-me/rainbowkit';
 import { Button, Flex } from "antd";
+
 function Page() {
   return (
     <div className='h-full' style={
