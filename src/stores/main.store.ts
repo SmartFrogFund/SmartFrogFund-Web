@@ -1,24 +1,24 @@
-import { observable, action, computed } from "mobx";
+import { observable, action, computed } from 'mobx';
 
 class MainStore {
-  @observable name: string = "ethan";
+  @observable name: string = 'ethan';
 
   @action
-  changeName = (newName: string): void => {
-    this.name = newName;
-  };
+    changeName = (newName: string): void => {
+      this.name = newName;
+    };
 
   @computed get hello() {
     return `hello ${this.name}`;
   }
 }
 class SubStore {
-  @observable name: string = "ggg";
+  @observable name: string = 'ggg';
 
   @action
-  changeName = (newName: string): void => {
-    this.name = newName;
-  };
+    changeName = (newName: string): void => {
+      this.name = newName;
+    };
 
   @computed get hello() {
     return `hello ${this.name}`;

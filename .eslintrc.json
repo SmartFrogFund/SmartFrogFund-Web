@@ -31,6 +31,7 @@
                 "commonjs": true,
                 "amd": true
             }
-        ]
+        ],
+        "max-classes-per-file": 0
     }
 }
