@@ -7,7 +7,7 @@ import {
   getDefaultConfig,
   cssStringFromTheme,
   lightTheme,
-  darkTheme
+  darkTheme,
 } from '@rainbow-me/rainbowkit';
 import {
   argentWallet,
@@ -24,10 +24,11 @@ import {
 } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
-  console.log(
-    cssStringFromTheme(lightTheme()),
-    cssStringFromTheme(darkTheme()),
-  );
+
+console.log(
+  cssStringFromTheme(lightTheme()),
+  cssStringFromTheme(darkTheme()),
+);
 const { wallets } = getDefaultWallets();
 const config = getDefaultConfig({
   appName: 'RainbowKit demo',

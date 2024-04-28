@@ -3,7 +3,7 @@
         "overrideConfigFile": "./.eslintrc.json"
     },
     "eslint.enable": true, // 是否开启检测
-    // "eslint.autoFixOnSave": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "eslint.validate": [
         "javascript",
         "javascriptreact",
@@ -16,7 +16,9 @@
         "markdown",
         "json"
     ],
-     "editor.codeActionsOnSave": {
+    "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "always"
     },
+    "editor.formatOnSave": true,
+    "eslint.format.enable": true,
 }
