@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id             String        @id @default(auto()) @map("_id") @db.ObjectId
+    name           String        @unique
+    email          String        @unique
+    password       String        @unique
+    walletAddress  String?       @unique
+    contracts      Contract[]
+    transactions   Transaction[]
+    Property       Property[]
+    initiatedSwaps Swap[]        @relation(name: "InitiatedSwaps")
+    receivedSwaps  Swap[]        @relation(name: "ReceivedSwaps")
+    isAdmin        Boolean       @default(false)
+
+    @@map("users")
+}
+
+model Property {
+    id          String     @id @default(auto()) @map("_id") @db.ObjectId
+    address     String     @unique
+    available   Boolean    @default(true)
+    rent        Float      @unique
+    landlord    User       @relation(fields: [landlordId], references: [id])
+    landlordId  String     @unique @db.ObjectId
+    contracts   Contract[]
+    images      String
+    description String     @unique
+
+    @@map("properties")
+}
+
+model Contract {
+    id           String        @id @default(auto()) @map("_id") @db.ObjectId
+    tenant       User          @relation(fields: [tenantId], references: [id])
+    tenantId     String        @unique @db.ObjectId
+    property     Property      @relation(fields: [propertyId], references: [id])
+    propertyId   String        @unique @db.ObjectId
+    fromDate     DateTime      @unique
+    toDate       DateTime      @unique
+    contractHash String // 区块链上的合同哈希 @unique
+    transactions Transaction[]
+
+    @@map("contracts")
+}
+
+model Transaction {
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt  DateTime  @default(now())
+    type       Int       @unique // "rent 1", "swap 2", "cross-chain 3", etc.
+    status     Int       @unique // "pending 1", "completed 2", "failed 3"
+    amount     Float     @unique // 交易金额 
+    currency   String    @unique // 交易货币
+    user       User      @relation(fields: [userId], references: [id])
+    userId     String    @unique @db.ObjectId
+    txHash     String    @unique // 区块链交易哈希 
+    chain      String    @unique // 交易链名称
+    contractId String?   @unique @db.ObjectId
+    contract   Contract? @relation(fields: [contractId], references: [id])
+    swapId     String?   @unique @db.ObjectId
+    swapInfo   Swap?     @relation(fields: [swapId], references: [id])
+
+    @@map("transactions")
+}
+
+model Swap {
+    id             String        @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt      DateTime      @unique @default(now())
+    initiator      User          @relation(name: "InitiatedSwaps", fields: [initiatorId], references: [id])
+    initiatorId    String        @unique @db.ObjectId
+    respondent     User?         @relation(name: "ReceivedSwaps", fields: [respondentId], references: [id])
+    respondentId   String?       @unique @db.ObjectId
+    inputAmount    Float         @unique // 输入的金额
+    outputAmount   Float         @unique // 输出的金额
+    inputCurrency  String        @unique // 输入的货币类型
+    outputCurrency String        @unique // 输出的货币类型
+    txHash         String        @unique // 交易哈希
+    chain          String        @unique // 交易链名称
+    Transaction    Transaction[]
+
+    @@map("swaps")
+}
