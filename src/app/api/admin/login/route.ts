@@ -25,7 +25,7 @@ export const POST = async (req:NextRequest) => {
       success: true,
     }, {
       headers: {
-        "Set-Cookie": "token=123;Path='/'",
+        "Set-Cookie": "token=123;Path=/",
       },
     });
   } catch (error:any) {

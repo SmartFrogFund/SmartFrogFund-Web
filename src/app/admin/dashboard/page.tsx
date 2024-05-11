@@ -3,7 +3,7 @@ import PageContainer from "../_components/PageContainer";
 
 function DashboardPage() {
   return (
-    <PageContainer title="Dashboard">
+    <PageContainer title="Dashboard" className="h-full">
       <div />
     </PageContainer>
   );
