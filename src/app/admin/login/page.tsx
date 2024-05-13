@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cookies } from "next/headers";
 
-function AdminPage() {
+function LoginPage() {
   const nav = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -23,24 +23,23 @@ function AdminPage() {
     const resData = await fetch(url, {
       method: "POST",
       body: JSON.stringify(values),
-    }).then((res) => {
-      debugger;
-      res.json();
     });
-    message.info(resData.message);
-    if (!isSignUp) {
-      // 如果是登录操作，跳转到 dashboard 页面
-      window.location.href = "/admin/dashboard";
-    }
+    const res = await resData.json();
+    message.info(res.message);
+    // if (!isSignUp) {
+    //   // 如果是登录操作，跳转到 dashboard 页面
+    //   window.location.href = "/admin/dashboard";
+    // }
   };
   return (
-    <div className="w-full h-full flex justify-center items-center mt-[10%]">
+    <div className="w-full h-[50%] flex justify-center items-center mt-[10%]">
       {contextHolder}
       <Card title="Login SmartQuickly" style={{ width: "50%" }}>
 
         <Form
           name="basic"
           onFinish={onFinish}
+          labelCol={{ span: 3 }}
         >
           <Form.Item
             label="Username"
@@ -50,7 +49,7 @@ function AdminPage() {
             <Input />
           </Form.Item>
           <Form.Item
-            label="password"
+            label="Password"
             name="password"
             rules={[{ required: true, message: "Please input your password!" }]}
           >
@@ -76,4 +75,4 @@ function AdminPage() {
   );
 }
 
-export default AdminPage;
+export default LoginPage;
