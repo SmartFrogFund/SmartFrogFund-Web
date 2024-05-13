@@ -16,9 +16,9 @@ datasource db {
 model User {
     id             String        @id @default(auto()) @map("_id") @db.ObjectId
     username       String        @unique
-    email          String?       @unique
-    password       String        @unique
-    walletAddress  String?       @unique
+    email          String?
+    password       String
+    walletAddress  String?
     contracts      Contract[]
     transactions   Transaction[]
     Property       Property[]
