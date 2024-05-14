@@ -23,7 +23,9 @@ export function middleware(request:NextRequest) {
     // 如果已在/dashboard页面，且有token，则不进行操作
     return null;
   }
-
+  //   if (pathname === "/") {
+  //     return NextResponse.redirect(new URL("/index", request.url));
+  //   }
   // 对于非/admin路径，不进行处理
   return NextResponse.next();
 }

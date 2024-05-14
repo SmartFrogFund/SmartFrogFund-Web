@@ -26,10 +26,10 @@ function LoginPage() {
     });
     const res = await resData.json();
     message.info(res.message);
-    // if (!isSignUp) {
-    //   // 如果是登录操作，跳转到 dashboard 页面
-    //   window.location.href = "/admin/dashboard";
-    // }
+    if (!isSignUp) {
+      // 如果是登录操作，跳转到 dashboard 页面
+      window.location.href = "/admin/dashboard";
+    }
   };
   return (
     <div className="w-full h-[50%] flex justify-center items-center mt-[10%]">

@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../lib/prismaDB";
-
+/**
+ * @swagger
+ * /api/admin/login:
+ *   post:
+ *     summary: 登录
+ *     responses:
+ *       '200':
+ *         description: Successful response
+ */
 export const POST = async (req:NextRequest) => {
   const data = await req.json();
   try {
