@@ -60,7 +60,8 @@ export const GET = async () => {
  *                 success:
  *                   type: boolean
  *                   example: true
- */export const POST = async (req:NextRequest) => {
+ */
+export const POST = async (req:NextRequest) => {
   const data = await req.json();
   try {
     const result = await prisma.user.create({
