@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 import prisma from "../../../../lib/prismaDB";
+
 /**
  * @swagger
  * /api/admin/login:
@@ -9,7 +11,7 @@ import prisma from "../../../../lib/prismaDB";
  *       '200':
  *         description: Successful response
  */
-export const POST = async (req:NextRequest) => {
+export const POST = async (req: NextRequest) => {
   const data = await req.json();
   try {
     const result = await prisma.user.findFirst({
@@ -18,14 +20,23 @@ export const POST = async (req:NextRequest) => {
         password: data.password,
       },
     });
+
     if (!result) {
       return NextResponse.json({
         message: "用户名或密码错误",
         code: 200,
         data,
-        success: true,
+        success: false,
       });
     }
+
+    // 生成 JWT
+    const token = jwt.sign(
+      { id: result.id, name: result.name }, // payload
+      process.env.JWT_SECRET as string, // secret key
+      { expiresIn: "6h" }, // options
+    );
+
     return NextResponse.json({
       message: "登录成功",
       code: 200,
@@ -33,21 +44,16 @@ export const POST = async (req:NextRequest) => {
       success: true,
     }, {
       headers: {
-        //  TODO 生成TOKEN
-        "Set-Cookie": "token=123;Path=/",
+        "Set-Cookie": `token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict`,
       },
     });
-  } catch (error:any) {
+  } catch (error: any) {
     console.log("@####", error, "@####");
-    // const errObj = JSON.parse(JSON.stringify(error));
-    // console.log("@####", errObj, "@####");
-    return NextResponse.json(
-      {
-        message: `登录失败:${error.meta.target}`,
-        code: error.code,
-        data,
-        success: false,
-      },
-    );
+    return NextResponse.json({
+      message: `登录失败:${error.meta?.target || error.message}`,
+      code: error.code,
+      data,
+      success: false,
+    });
   }
 };

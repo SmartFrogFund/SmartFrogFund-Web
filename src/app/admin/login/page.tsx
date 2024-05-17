@@ -3,39 +3,42 @@
 import {
   Button, Card, Form, Input, message,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { cookies } from "next/headers";
+import useApi from "../../../services/api"; // 引入 useApi hook
+import { useFetch } from "../../../hooks/useFetch";
 
 function LoginPage() {
   const nav = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
-  const onFinish = async (values:any) => {
-    let url = "";
-    if (isSignUp) {
-      url = "http://localhost:3000/api/users";
-    } else {
-      url = "http://localhost:3000/api/admin/login";
-    }
+  const {
+    login, signUp, LoadingSpinner, loading,
+  } = useApi();
+  // 通过 useEffect 来监控 loading 状态的变化
 
-    const resData = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(values),
-    });
-    const res = await resData.json();
-    message.info(res.message);
-    if (!isSignUp) {
-      // 如果是登录操作，跳转到 dashboard 页面
-      window.location.href = "/admin/dashboard";
+  const onFinish = async (values: any) => {
+    try {
+      let res;
+      if (isSignUp) {
+        res = await signUp(values);
+      } else {
+        res = await login(values);
+      }
+
+      if (!isSignUp && res.success) {
+        window.location.href = "/admin/dashboard";
+      }
+    } catch (error) {
+      // Error handling is already done in the hook
     }
   };
+
   return (
     <div className="w-full h-[50%] flex justify-center items-center mt-[10%]">
       {contextHolder}
       <Card title="Login SmartQuickly" style={{ width: "50%" }}>
-
         <Form
           name="basic"
           onFinish={onFinish}
@@ -70,7 +73,7 @@ function LoginPage() {
           </Form.Item>
         </Form>
       </Card>
-
+      <LoadingSpinner />
     </div>
   );
 }

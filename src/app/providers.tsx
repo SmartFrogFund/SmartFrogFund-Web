@@ -25,7 +25,6 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
-console.log(cssStringFromTheme(lightTheme()), cssStringFromTheme(darkTheme()));
 const { wallets } = getDefaultWallets();
 const config = getDefaultConfig({
   appName: "RainbowKit demo",

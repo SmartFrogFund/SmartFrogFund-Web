@@ -27,13 +27,24 @@ import prisma from "../../../lib/prismaDB";
  */
 export const GET = async () => {
   const data = await prisma.user.findMany({});
-  return NextResponse.json(
-    {
-      message: "Hello World",
-      code: 200,
-      data,
-    },
-  );
+  try {
+    return NextResponse.json(
+      {
+        message: "Hello World",
+        code: 200,
+        data,
+        success: true,
+      },
+    );
+  } catch (error:any) {
+    return NextResponse.json(
+      {
+        message: `查询失败:${error.meta.target}`,
+        code: error.code,
+        success: false,
+      },
+    );
+  }
 };
 /**
  * @swagger
