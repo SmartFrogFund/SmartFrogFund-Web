@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { stringify } from "querystring";
+import { User } from "@prisma/client";
 import prisma from "../../../lib/prismaDB";
 /**
  * @swagger
@@ -26,7 +27,7 @@ import prisma from "../../../lib/prismaDB";
  *                   example: [{"id": "6641d1b2679301d6ff102e6f","username": "gony1","email": null,"password": "1234561","walletAddress": null,"isAdmin": false}]
  */
 export const GET = async () => {
-  const data = await prisma.user.findMany({});
+  const data :User = await prisma.user.findMany({});
   try {
     return NextResponse.json(
       {
