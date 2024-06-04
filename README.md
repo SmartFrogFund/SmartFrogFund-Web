@@ -2,6 +2,16 @@ This is a [Next.js](https://nextjs.org/) 14 App Router project bootstrapped with
 
 ## Getting Started
 
+### ready
+
+```
+node.js 18.19.1
+
+pnpm install
+```
+
+
+
 First, run the development server:
 
 ```bash
