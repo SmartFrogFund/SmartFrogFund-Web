@@ -46,7 +46,7 @@ const Page = observer(() => {
                 <Button type="text">Text Button</Button>
                 <Button type="link">Link Button</Button>
                 <Button type="link">
-                    <Link href="/details">Details</Link>
+                    <Link href="/detail">Details</Link>
                 </Button>
             </Flex>
         </div>

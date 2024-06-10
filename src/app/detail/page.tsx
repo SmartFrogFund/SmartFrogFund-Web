@@ -1,7 +1,11 @@
+"use client";
+
+
 import React, {useState, useEffect} from 'react';
-import {useRouter} from 'next/router';
+import {useSearchParams} from 'next/navigation'
+
 import dayjs from 'dayjs';
-import styles from '../styles/detail.module.scss'
+import styles from '../../styles/detail.module.scss'
 import Link from 'next/link';
 
 import {
@@ -23,9 +27,8 @@ const App: React.FC = () => {
     };
     const [formData] = Form.useForm();
     const [isEditing, setIsEditing] = useState(false);
-    const router = useRouter();
-    const {projectId} = router.query;
-    console.log(projectId);
+    const query = Object.fromEntries(useSearchParams().entries());
+    const {projectId} = query
     useEffect(() => {
         if (projectId) {
             console.log('进来了');
