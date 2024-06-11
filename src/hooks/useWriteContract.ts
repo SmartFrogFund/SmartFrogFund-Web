@@ -7,15 +7,15 @@ import { Address, formatEther, formatUnits } from "viem";
 import {
   useReadContract, useWriteContract, useReadContracts, useWatchContractEvent,
 } from "wagmi";
-import { Fund } from "@/abi";
+import { FundAbi } from "@/abi";
 
 const useReadAuctionTemplate = () => {
   const {
     data, error, writeContract, isError, isPending, isSuccess, failureReason,
   } = useWriteContract();
-  const approveNft2 = (address:any, args:Array<any>) => {
+  const approveErc20 = (address:any, args:Array<any>) => {
     writeContract({
-      abi: Fund,
+      abi: FundAbi,
       address,
       functionName: "approve",
       args,
@@ -23,7 +23,7 @@ const useReadAuctionTemplate = () => {
   };
 
   return {
-    approveNft2, data, error, isError, isPending, isSuccess, failureReason,
+    approveErc20, data, error, isError, isPending, isSuccess, failureReason,
   };
 };
 export { useReadAuctionTemplate };
