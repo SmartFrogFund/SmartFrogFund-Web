@@ -247,6 +247,21 @@ export const FundAbi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "_title",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_description",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_link",
+        type: "string",
+      },
+      {
         internalType: "uint256",
         name: "_goalAmount",
         type: "uint256",
@@ -378,6 +393,21 @@ export const FundAbi = [
         internalType: "address payable",
         name: "creator",
         type: "address",
+      },
+      {
+        internalType: "string",
+        name: "title",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "link",
+        type: "string",
       },
       {
         internalType: "uint256",
