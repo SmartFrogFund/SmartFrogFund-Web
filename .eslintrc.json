@@ -36,6 +36,9 @@
                 "amd": true
             }
         ],
+        "react/function-component-definition": 0,
+        "no-useless-escape": 0,
+        "no-debugger": 0,
         "max-classes-per-file": 0
     }
 }
