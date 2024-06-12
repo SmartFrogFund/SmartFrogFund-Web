@@ -12,8 +12,10 @@ import {
   Form,
   Input,
   InputNumber,
+  Progress
 } from "antd";
 import styles from "../../styles/detail.module.scss";
+import "../../styles/detail.css";
 
 const App: React.FC = () => {
   const onFinish = (values: any) => {
@@ -26,7 +28,7 @@ const App: React.FC = () => {
   const [formData] = Form.useForm();
   const [isEditing, setIsEditing] = useState(false);
   const query = Object.fromEntries(useSearchParams().entries());
-  const { projectId } = query;
+  const { projectId,isInvestors } = query;
   useEffect(() => {
     if (projectId) {
       console.log("进来了");
@@ -45,14 +47,17 @@ const App: React.FC = () => {
 
       console.log(formData, "formData");
     }
-  }, [projectId, formData]);
+  
+  }, [projectId]);
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container}`}        
+    >
       <Link href="/" className={styles.rightBtn}>Exit</Link>
-      <h1>Project Registration</h1>
-      <Form
-        className={styles.formBox}
+      <div className={styles.title}>Project Registration</div>
+       <Form
+        disabled={!!isInvestors}
+        className={`${styles.formBox} detailFrom`}
         labelCol={{ span: 7 }}
         wrapperCol={{ span: 24 }}
         layout="horizontal"
@@ -63,11 +68,10 @@ const App: React.FC = () => {
       >
         <Form.Item
           label="Project Name"
-          disabled={isEditing}
           name="projectName"
           rules={[{ required: true, message: "Please input the project name!" }]}
         >
-          <Input />
+          <Input           disabled={isEditing}/>
         </Form.Item>
         <Form.Item
           label="Project Description"
@@ -76,6 +80,28 @@ const App: React.FC = () => {
         >
           <Input.TextArea rows={4} />
         </Form.Item>
+
+
+
+        <Form.Item
+          label="Project progress"
+          name="projectLink"
+          rules={[{ required: true, message: "Please input the project link!" }]}
+        >
+         <div style={{
+            display:"flex",
+            justifyContent:'space-between',
+            alignItems:'center',
+            height:'100%'
+          }}>
+        <Progress percent={75} steps={4} strokeColor={'#97D44A'} trailColor={'#B5C5A4'} size={40} className={styles.progress}/>
+        <Button  ghost  className={styles.processBtn}> 
+          Next progress 
+        </Button>
+          </div> 
+      
+        </Form.Item>
+
 
         <Form.Item
           label="Project Link"
@@ -86,34 +112,33 @@ const App: React.FC = () => {
         </Form.Item>
         <Form.Item
           label="Project Creator"
-          disabled={isEditing}
           name="projectCreator"
           rules={[{ required: true, message: "Please input the project creator!" }]}
         >
-          <Input />
+          <Input           disabled={isEditing}
+/>
         </Form.Item>
         <Form.Item
           label="Project Need ETH"
-          disabled={isEditing}
           name="projectNeedETH"
           rules={[{ required: true, message: "Please input the amount of ETH needed!" }]}
         >
-          <InputNumber style={{ width: 200 }} />
+          <InputNumber    disabled={isEditing}
+ style={{ width: 200 }} />
         </Form.Item>
         <Form.Item
           label="Project Deadline"
-          disabled={isEditing}
           name="projectDeadline"
           rules={[{ required: true, message: "Please input the project deadline!" }]}
         >
-          <DatePicker style={{ width: 200 }} format="YYYY-MM-DD" />
+          <DatePicker  style={{ width: 200 }} format="YYYY-MM-DD" disabled={isEditing} />
         </Form.Item>
         <Form.Item style={{ textAlign: "right" }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" style={{backgroundColor:'#97D44A'}}> 
             {isEditing ? "Update" : "Submit"}
           </Button>
         </Form.Item>
-      </Form>
+      </Form> 
     </div>
   );
 };

@@ -1,0 +1,9 @@
+
+
+.detailFrom input:disabled {
+  background-color: #B5C5A4 !important;
+}
+
+.detailFrom .ant-picker-disabled,.ant-input-disabled{
+  background-color: #B5C5A4 !important;
+}

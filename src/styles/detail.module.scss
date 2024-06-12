@@ -1,6 +1,6 @@
 $primary-color: #4caf50;
 $secondary-color: #ccc;
-$background-color: #f9f9f9;
+$background-color: #0F030F;
 $input-border-color: #ddd;
 $text-color: #555;
 
@@ -14,8 +14,13 @@ $text-color: #555;
   width: 100vw;
   background-color: $background-color;
 
-  h1 {
-    margin-bottom: 50px;
+  .title {
+    margin-bottom: 20px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
   }
 
   .formBox {
@@ -23,25 +28,42 @@ $text-color: #555;
     border-radius: 10px;
     width: 60%;
     padding: 20px;
-    background-color: white;
+   
     //border: 1px solid #000;
-  }
+    label {
+      color: white !important;
+    }
+
+    span {
+      color: white !important;
+    }
+
+   
+}
 
   .rightBtn {
     position: absolute;
     top: 50px;
     right: 50px;
-    color: black;
+    color: white;
     font-weight: bold;
-    border: 1px solid #000;
+    border: 1px solid white;
     border-radius: 6px;
     padding: 10px 30px;
-    cursor:pointer;
+    cursor: pointer;
     text-underline: none;
-    text-decoration:none;
+    text-decoration: none;
+  }
+
+  .progress {
+    height: 100% !important;
+  }
+
+  .processBtn {
+    margin-left: 20px;
+
+    &:hover {
+      border-color: #97D44A !important
+    }
   }
 }
-
-
-
-
