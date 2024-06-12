@@ -1094,3 +1094,5 @@ export const ERC20Abi = [
     type: "function",
   },
 ];
+
+export const FundAddress = "0x02275E1d9893b3cFEBaDeB6fC1D281F89f7cF783";

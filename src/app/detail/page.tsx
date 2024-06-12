@@ -12,7 +12,7 @@ import {
   Form,
   Input,
   InputNumber,
-  Progress
+  Progress,
 } from "antd";
 import styles from "../../styles/detail.module.scss";
 import "../../styles/detail.css";
@@ -28,7 +28,7 @@ const App: React.FC = () => {
   const [formData] = Form.useForm();
   const [isEditing, setIsEditing] = useState(false);
   const query = Object.fromEntries(useSearchParams().entries());
-  const { projectId,isInvestors } = query;
+  const { projectId, isInvestors } = query;
   useEffect(() => {
     if (projectId) {
       console.log("进来了");
@@ -47,15 +47,13 @@ const App: React.FC = () => {
 
       console.log(formData, "formData");
     }
-  
   }, [projectId]);
 
   return (
-    <div className={`${styles.container}`}        
-    >
+    <div className={`${styles.container}`}>
       <Link href="/" className={styles.rightBtn}>Exit</Link>
       <div className={styles.title}>Project Registration</div>
-       <Form
+      <Form
         disabled={!!isInvestors}
         className={`${styles.formBox} detailFrom`}
         labelCol={{ span: 7 }}
@@ -71,7 +69,7 @@ const App: React.FC = () => {
           name="projectName"
           rules={[{ required: true, message: "Please input the project name!" }]}
         >
-          <Input           disabled={isEditing}/>
+          <Input disabled={isEditing} />
         </Form.Item>
         <Form.Item
           label="Project Description"
@@ -81,27 +79,25 @@ const App: React.FC = () => {
           <Input.TextArea rows={4} />
         </Form.Item>
 
-
-
         <Form.Item
           label="Project progress"
           name="projectLink"
           rules={[{ required: true, message: "Please input the project link!" }]}
         >
-         <div style={{
-            display:"flex",
-            justifyContent:'space-between',
-            alignItems:'center',
-            height:'100%'
-          }}>
-        <Progress percent={75} steps={4} strokeColor={'#97D44A'} trailColor={'#B5C5A4'} size={40} className={styles.progress}/>
-        <Button  ghost  className={styles.processBtn}> 
-          Next progress 
-        </Button>
-          </div> 
-      
-        </Form.Item>
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            height: "100%",
+          }}
+          >
+            <Progress percent={75} steps={4} strokeColor="#97D44A" trailColor="#B5C5A4" size={40} className={styles.progress} />
+            <Button ghost className={styles.processBtn}>
+              Next progress
+            </Button>
+          </div>
 
+        </Form.Item>
 
         <Form.Item
           label="Project Link"
@@ -115,30 +111,31 @@ const App: React.FC = () => {
           name="projectCreator"
           rules={[{ required: true, message: "Please input the project creator!" }]}
         >
-          <Input           disabled={isEditing}
-/>
+          <Input disabled={isEditing} />
         </Form.Item>
         <Form.Item
           label="Project Need ETH"
           name="projectNeedETH"
           rules={[{ required: true, message: "Please input the amount of ETH needed!" }]}
         >
-          <InputNumber    disabled={isEditing}
- style={{ width: 200 }} />
+          <InputNumber
+            disabled={isEditing}
+            style={{ width: 200 }}
+          />
         </Form.Item>
         <Form.Item
           label="Project Deadline"
           name="projectDeadline"
           rules={[{ required: true, message: "Please input the project deadline!" }]}
         >
-          <DatePicker  style={{ width: 200 }} format="YYYY-MM-DD" disabled={isEditing} />
+          <DatePicker style={{ width: 200 }} format="YYYY-MM-DD" disabled={isEditing} />
         </Form.Item>
         <Form.Item style={{ textAlign: "right" }}>
-          <Button type="primary" htmlType="submit" style={{backgroundColor:'#97D44A'}}> 
+          <Button type="primary" htmlType="submit" style={{ backgroundColor: "#97D44A" }}>
             {isEditing ? "Update" : "Submit"}
           </Button>
         </Form.Item>
-      </Form> 
+      </Form>
     </div>
   );
 };
