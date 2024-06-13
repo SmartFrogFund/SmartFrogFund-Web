@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 function Header() {
   return (
@@ -9,9 +10,7 @@ function Header() {
           FrogFund
         </Link>
         <div>
-          <button className="bg-[#4caf50] rounded-2xl h-8 px-3">
-            Connect Wallet
-          </button>
+          <ConnectButton />
         </div>
       </div>
     </div>

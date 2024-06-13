@@ -5,6 +5,7 @@ import { Button, Flex } from "antd";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { mainStore, subStore } from "../stores/main.store";
+import HomePage from "./home/page";
 
 const Page = observer(() => {
   const handleChangeName = () => {
@@ -21,7 +22,7 @@ const Page = observer(() => {
         background: " linear-gradient(155deg, #ffffff 0%, #4788d8 100%)",
       }}
     >
-      <div
+      {/* <div
         className="absolute right-4 top-1"
         style={{
           display: "flex",
@@ -48,7 +49,8 @@ const Page = observer(() => {
         <Button type="link">
           <Link href="/detail">Details</Link>
         </Button>
-      </Flex>
+      </Flex> */}
+      <HomePage />
     </div>
   );
 });

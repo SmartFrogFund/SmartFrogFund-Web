@@ -8,6 +8,7 @@ import {
   cssStringFromTheme,
   lightTheme,
   darkTheme,
+  AvatarComponent,
 } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
@@ -21,9 +22,12 @@ import {
   optimism,
   polygon,
   sepolia,
+  lineaSepolia,
 } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
+import Image from "next/image";
+import SvgIconFrog from "@/public/images/logo-frog2.svg";
 
 const { wallets } = getDefaultWallets();
 const config = getDefaultConfig({
@@ -42,6 +46,7 @@ const config = getDefaultConfig({
     optimism,
     arbitrum,
     base,
+    lineaSepolia,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia] : []),
   ],
   ssr: true,
@@ -49,11 +54,32 @@ const config = getDefaultConfig({
 
 const queryClient = new QueryClient();
 
+const avatar: AvatarComponent = ({ address, ensImage, size }) => (
+  <img
+    src={SvgIconFrog.src}
+    width={60}
+    alt="alt"
+    height={60}
+    style={{ borderRadius: 999 }}
+  />
+);
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>{children}</RainbowKitProvider>
+        <RainbowKitProvider
+          avatar={
+            avatar
+            }
+          theme={darkTheme({
+            accentColor: "#4caf50",
+            accentColorForeground: "white",
+            fontStack: "system",
+            overlayBlur: "small",
+          })}
+        >
+          {children}
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
