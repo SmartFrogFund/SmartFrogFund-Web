@@ -342,19 +342,6 @@ export const FundAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_projectId",
-        type: "uint256",
-      },
-    ],
-    name: "distributeFunds",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "",
         type: "uint256",
       },
@@ -466,6 +453,11 @@ export const FundAbi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
       {
         internalType: "uint256",
@@ -588,6 +580,11 @@ export const FundAbi = [
       {
         internalType: "uint256",
         name: "currentAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountDistributed",
         type: "uint256",
       },
       {
