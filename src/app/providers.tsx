@@ -26,7 +26,6 @@ import {
 } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
-import Image from "next/image";
 import SvgIconFrog from "@/public/images/logo-frog2.svg";
 
 const { wallets } = getDefaultWallets();
@@ -54,7 +53,7 @@ const config = getDefaultConfig({
 
 const queryClient = new QueryClient();
 
-const avatar: AvatarComponent = ({ address, ensImage, size }) => (
+const avatar: AvatarComponent = () => (
   <img
     src={SvgIconFrog.src}
     width={60}
