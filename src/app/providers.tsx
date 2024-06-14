@@ -72,6 +72,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           avatar={
             avatar
             }
+
           theme={darkTheme({
             accentColor: "#4caf50",
             accentColorForeground: "white",

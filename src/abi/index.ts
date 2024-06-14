@@ -1091,6 +1091,6 @@ export const ERC20Abi = [
     type: "function",
   },
 ];
-
-export const FundAddress = "0xAff3dAD48A1C1699A22ff685bE6F9592CdE79b33";
-export const Erc20Address = "0x085500B2462eC1B4f3A4fc40c29de9243533F5D6";
+export const FundAddress = process.env.NEXT_PUBLIC_FundAddress as `0x${string}`;
+export const Erc20Address = process.env
+  .NEXT_PUBLIC_Erc20Address as `0x${string}`;
