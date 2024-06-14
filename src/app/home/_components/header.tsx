@@ -5,7 +5,7 @@ import { useReadCROAKBalanceOf } from "@/hooks/useContract";
 import {
   useAccount,
 } from "wagmi";
-import { formatEther, format } from "viem";
+import { formatEther } from "viem";
 import { abbreviateNumber } from "@/utils/formatAmount";
 import meme from "@/public/images/tokenomics.png";
 
@@ -16,10 +16,12 @@ function Header() {
   } = useReadCROAKBalanceOf([address]);
   const [curCROAK, setCurCROAK] = useState(0);
   useEffect(() => {
-    if (CROAK) {
+    if (CROAK && Number(CROAK) > 0) {
       setCurCROAK(Number(formatEther(CROAK)));
     }
   }, [CROAK]);
+  console.log(CROAK, curCROAK, isLoading, isError, isSuccess);
+
   return (
     <div className="sticky top-0 z-40 w-full bg-[#0F030F] h-[65px]">
       <div className="h-full max-w-screen-md m-auto flex flex-row items-center justify-center justify-between">
