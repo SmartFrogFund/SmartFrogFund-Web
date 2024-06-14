@@ -7,3 +7,14 @@
 .detailFrom .ant-picker-disabled,.ant-input-disabled{
   background-color: #B5C5A4 !important;
 }
+
+.detailFrom .stepBtn:hover {
+  border-color: #97D44A !important;
+}
+
+
+.detailFrom .stepBtn:disabled,
+.detailFrom .stepBtn[disabled] {
+  border-color: white !important; /* 这里设置禁用状态下的边框颜色 */
+  /* 你可以根据需要设置其他禁用状态下的样式 */
+}

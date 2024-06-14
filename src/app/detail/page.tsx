@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 import dayjs from "dayjs";
 import Link from "next/link";
+import StepModal from './_components/stepModal';
 
 import {
   Button,
@@ -13,12 +14,34 @@ import {
   Input,
   InputNumber,
   Progress,
+  Popover
 } from "antd";
 import styles from "../../styles/detail.module.scss";
 import "../../styles/detail.css";
 
 const App: React.FC = () => {
-  const onFinish = (values: any) => {
+
+ 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+ 
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = (newData: any) => {
+    setIsModalOpen(false);
+    formData.setFieldsValue({ projectProcessDetail: newData });
+    console.log('Updated data:', newData);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+
+
+  //信息表单
+    const onFinish = (values: any) => {
     const formattedValues = {
       ...values,
       projectDeadline: values.projectDeadline ? values.projectDeadline.format("YYYY-MM-DD") : null,
@@ -39,12 +62,16 @@ const App: React.FC = () => {
         projectDescription: "This is an existing project description",
         projectNeedETH: 10,
         projectLink: "http://example.com",
-        projectCreator: "John Doe",
+        projectProcessDetail:{
+          Step1: "Initial value for Step1",
+          Step2: "Initial value for Step2",
+          Step3: "Initial value for Step3",
+          Step4: "Initial value for Step4",
+        },
         projectDeadline: "2023-12-31",
       };
       fetchedData.projectDeadline = dayjs(fetchedData.projectDeadline, "YYYY-MM-DD");
       formData.setFieldsValue(fetchedData);
-
       console.log(formData, "formData");
     }
   }, [projectId]);
@@ -81,8 +108,7 @@ const App: React.FC = () => {
 
         <Form.Item
           label="Project progress"
-          name="projectLink"
-          rules={[{ required: true, message: "Please input the project link!" }]}
+          name="projectProcessDetail"
         >
           <div style={{
             display: "flex",
@@ -92,9 +118,26 @@ const App: React.FC = () => {
           }}
           >
             <Progress percent={75} steps={4} strokeColor="#97D44A" trailColor="#B5C5A4" size={40} className={styles.progress} />
-            <Button ghost className={styles.processBtn}>
-              Next progress
+            <Button ghost className={styles.processBtn} onClick={showModal}>
+              Details
             </Button>
+            
+            {isEditing ? (
+              <Popover
+                placement="rightTop"
+                overlayStyle={{ width: '200px' }}
+                title={'notice:'}
+                content={'It needs to be approved before it can proceed to the next step'}
+              >
+                <Button ghost className={`stepBtn`} disabled={isEditing}>
+                  Next Step
+                </Button>
+              </Popover>
+            ) : (
+              <Button ghost className={`stepBtn`} disabled={isEditing}>
+                Next Step
+              </Button>
+            )}
           </div>
 
         </Form.Item>
@@ -105,13 +148,6 @@ const App: React.FC = () => {
           rules={[{ required: true, message: "Please input the project link!" }]}
         >
           <Input addonBefore="https://" />
-        </Form.Item>
-        <Form.Item
-          label="Project Creator"
-          name="projectCreator"
-          rules={[{ required: true, message: "Please input the project creator!" }]}
-        >
-          <Input disabled={isEditing} />
         </Form.Item>
         <Form.Item
           label="Project Need ETH"
@@ -136,6 +172,15 @@ const App: React.FC = () => {
           </Button>
         </Form.Item>
       </Form>
+
+      
+      <StepModal
+        isModalOpen={isModalOpen}
+        initialData={formData.getFieldValue('projectProcessDetail')}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      />
+      
     </div>
   );
 };
