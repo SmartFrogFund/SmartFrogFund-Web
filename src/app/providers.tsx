@@ -27,6 +27,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import SvgIconFrog from "@/public/images/logo-frog2.svg";
+import { localChain } from "@/consts/chains";
 
 const { wallets } = getDefaultWallets();
 const config = getDefaultConfig({
@@ -46,6 +47,7 @@ const config = getDefaultConfig({
     arbitrum,
     base,
     lineaSepolia,
+    localChain,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia] : []),
   ],
   ssr: true,
