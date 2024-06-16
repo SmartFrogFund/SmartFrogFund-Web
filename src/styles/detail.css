@@ -1,5 +1,5 @@
 
-
+/* 详情页 */
 .detailFrom input:disabled {
   background-color: #B5C5A4 !important;
 }
@@ -13,8 +13,28 @@
 }
 
 
+
 .detailFrom .stepBtn:disabled,
 .detailFrom .stepBtn[disabled] {
   border-color: white !important; /* 这里设置禁用状态下的边框颜色 */
   /* 你可以根据需要设置其他禁用状态下的样式 */
+}
+
+
+/* step弹框 */
+.stepModal{
+  top: 0 !important;
+background-color: transparent !important;
+}
+.stepModal .ant-modal-content{
+  background-color: #0F030F !important; 
+  border: 2px #fff  solid !important;
+}
+
+.stepModal .ant-modal-title{
+  background-color: #0F030F !important;
+  color: #fff !important;
+}
+.stepModal .ant-modal-close-x{
+  color: #fff !important;
 }

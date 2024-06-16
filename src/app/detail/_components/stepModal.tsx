@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { Modal, Form, Input } from 'antd';
+import { Modal, Form, Input ,Button} from 'antd';
 import styles from "../../../styles/detail.module.scss";
+import "../../../styles/detail.css";
 
 interface StepModalProps {
+  isInvestors:boolean;
   isModalOpen: boolean;
   initialData: any;
   onOk: (data: any) => void;
@@ -11,7 +13,7 @@ interface StepModalProps {
 const placeholder = `1.what to do\n2.\n3.\n...`; // 使用换行符
 
 
-const StepModal: React.FC<StepModalProps> = ({ isModalOpen, initialData, onOk, onCancel }) => {
+const StepModal: React.FC<StepModalProps> = ({ isModalOpen, initialData, onOk, onCancel ,isInvestors}) => {
   const [modalForm] = Form.useForm();
 
   useEffect(() => {
@@ -20,7 +22,7 @@ const StepModal: React.FC<StepModalProps> = ({ isModalOpen, initialData, onOk, o
     }
   }, [initialData, modalForm]);
 
-  const handleOk = () => {
+  const onFinish = () => {
     modalForm.validateFields().then(values => {
       onOk(values);
     }).catch(info => {
@@ -31,18 +33,22 @@ const StepModal: React.FC<StepModalProps> = ({ isModalOpen, initialData, onOk, o
   return (
     <Modal
       title="Project Steps"
+      className={`${styles.container} stepModal`}
       open={isModalOpen}
-      onOk={handleOk}
+      width={600}
       onCancel={onCancel}
+      footer={null}
     >
       <Form
         form={modalForm}
         className={`${styles.formBox} detailFrom`}
-        labelCol={{ span: 7 }}
+        labelCol={{ span: 5 }}
         wrapperCol={{ span: 24 }}
         layout="horizontal"
         size="large"
-        style={{ width: 640 }}
+        disabled={isInvestors}
+        style={{ width: 500 }}
+        onFinish={onFinish}
       >
         <Form.Item label="Step1(30%):" name="Step1" >
           <Input.TextArea rows={4} placeholder={placeholder}/>
@@ -56,9 +62,15 @@ const StepModal: React.FC<StepModalProps> = ({ isModalOpen, initialData, onOk, o
         <Form.Item label="Step4(100%):" name="Step4">
           <Input.TextArea rows={4} placeholder={placeholder}/>
         </Form.Item>
+        {!isInvestors? (<Form.Item style={{ textAlign: "right" }}>
+          <Button type="primary" htmlType="submit" size='middle' style={{ backgroundColor: "#97D44A" }}>
+            submit
+          </Button>
+        </Form.Item>):''
+        }
       </Form>
     </Modal>
-  );
+  );  
 };
 
 export default StepModal;
