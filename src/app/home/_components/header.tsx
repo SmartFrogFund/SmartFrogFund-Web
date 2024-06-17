@@ -1,10 +1,9 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useReadCROAKBalanceOf } from "@/hooks/useContract";
-import {
-  useAccount,
-} from "wagmi";
+import { useAccount } from "wagmi";
 import { formatEther } from "viem";
 import { abbreviateNumber } from "@/utils/formatAmount";
 import meme from "@/public/images/tokenomics.png";
@@ -12,7 +11,10 @@ import meme from "@/public/images/tokenomics.png";
 function Header() {
   const { address } = useAccount();
   const {
-    data: CROAK, isLoading, isError, isSuccess,
+    data: CROAK,
+    isLoading,
+    isError,
+    isSuccess,
   } = useReadCROAKBalanceOf([address]);
   const [curCROAK, setCurCROAK] = useState(0);
   useEffect(() => {
@@ -37,8 +39,11 @@ function Header() {
           <img src={meme.src} alt="meme" className="w-4 h-4 inline-block" />
         </p>
         <div>
-
-          <ConnectButton chainStatus="icon" accountStatus="avatar" showBalance={false} />
+          <ConnectButton
+            chainStatus="icon"
+            accountStatus="avatar"
+            showBalance={false}
+          />
         </div>
       </div>
     </div>
