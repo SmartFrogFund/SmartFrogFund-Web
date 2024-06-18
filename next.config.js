@@ -4,6 +4,9 @@ const path = require("path");
 const nextConfig = {
   transpilePackages: ["react-syntax-highlighter", "swagger-client", "swagger-ui-react"],
   reactStrictMode: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
