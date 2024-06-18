@@ -16,6 +16,7 @@ import {
   InputNumber,
   Progress,
   Popover,
+  message,
 } from "antd";
 import StepModal from "./_components/stepModal";
 import Inverment from "./_components/inverment";
@@ -32,6 +33,8 @@ const DetailPage: React.FC = () => {
   const {
     projectId, isInvestors, hasInvest, allowExamine,
   } = query;
+  const [messageApi, contextHolder] = message.useMessage();
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -68,9 +71,32 @@ const DetailPage: React.FC = () => {
   const onFinish = (values: any) => {
     creatProject(["测试Title", "测试desc", "https:111", 23, 719523518]);
   };
+
   useEffect(() => {
+    console.log(isError, creatProError, failureReason, "isError");
     console.log((creatProError as BaseError)?.shortMessage, "@@@@");
-  }, [creatProError]);
+    const content = (creatProError as BaseError)?.shortMessage;
+    if (isError) {
+      messageApi.open({
+        type: "error",
+        content,
+      });
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    console.log(isPending);
+    if (isPending) {
+      messageApi.open({
+        type: "loading",
+        content: "Action in progress..",
+        duration: 0,
+      });
+    } else {
+      // Dismiss manually and asynchronously
+      setTimeout(messageApi.destroy, 2500);
+    }
+  }, [isPending]);
   // 获取详情信息
   const {
     data: detailInfo,
@@ -143,6 +169,7 @@ const DetailPage: React.FC = () => {
   return (
     <div className={`${styles.container} mt-10 `}>
       <div className={styles.title}>{comTitle().title}</div>
+      {contextHolder}
       <Form
         disabled={!!isInvestors}
         className={`${styles.formBox} detailFrom ${
