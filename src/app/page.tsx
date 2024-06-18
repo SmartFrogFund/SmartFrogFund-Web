@@ -5,7 +5,7 @@ import { Button, Flex } from "antd";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { mainStore, subStore } from "../stores/main.store";
-import HomePage from "./home/page";
+import WelcomePage from "./welcome/page";
 
 const Page = observer(() => {
   const handleChangeName = () => {
@@ -50,7 +50,7 @@ const Page = observer(() => {
           <Link href="/detail">Details</Link>
         </Button>
       </Flex> */}
-      <HomePage />
+      <WelcomePage />
     </div>
   );
 });
