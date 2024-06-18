@@ -23,7 +23,7 @@ import Examine from "./_components/examine";
 import styles from "../../styles/detail.module.scss";
 import "../../styles/detail.css";
 
-const App: React.FC = () => {
+const DetailPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData] = Form.useForm();
   const [isEditing, setIsEditing] = useState(false);
@@ -61,22 +61,15 @@ const App: React.FC = () => {
   // ]);
 
   const {
-    writeContract, data, isError, isSuccess,
+    creatProject, data, isError, isSuccess, isPending, error: creatProError,
   } = useWriteNewProject();
-  console.log(writeContract, "writeContract");
   // 信息表单
   const onFinish = (values: any) => {
-    const formattedValues = {
-      ...values,
-      projectDeadline: values.projectDeadline
-        ? values.projectDeadline.format("YYYY-MM-DD")
-        : null,
-    };
-    writeContract(["测试Title", "测试desc", "https:111", 23, 3453454]);
-    console.log("Form data:", formattedValues);
-    console.log(data, isError, isSuccess, "data,isError,isSuccess");
+    creatProject(["测试Title", "测试desc", "https:111", 23, 1719523518]);
   };
-
+  useEffect(() => {
+    console.log(data, isSuccess, isError, creatProError, formData);
+  }, [data, isSuccess, isPending, isError, creatProError]);
   // 获取详情信息
   const {
     data: detailInfo,
@@ -147,10 +140,7 @@ const App: React.FC = () => {
   }, [projectId, detailInfo]);
 
   return (
-    <div className={`${styles.container}`}>
-      <Link href="/" className={styles.rightBtn}>
-        Exit
-      </Link>
+    <div className={`${styles.container} mt-10 `}>
       <div className={styles.title}>{comTitle().title}</div>
       <Form
         disabled={!!isInvestors}
@@ -271,8 +261,8 @@ const App: React.FC = () => {
           ]}
         >
           <DatePicker
+            showTime={{ format: "HH:mm" }}
             style={{ width: 200 }}
-            format="YYYY-MM-DD"
             disabled={isEditing}
           />
         </Form.Item>
@@ -313,4 +303,4 @@ const App: React.FC = () => {
     </div>
   );
 };
-export default App;
+export default DetailPage;

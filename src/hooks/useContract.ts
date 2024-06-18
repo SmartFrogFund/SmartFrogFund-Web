@@ -45,23 +45,27 @@ const useReadCROAKBalanceOf = (args?: any[]): IuseReadCROAKBalanceOfProps => {
 
 const useWriteNewProject = () => {
   const {
-    writeContract, data, isError, isSuccess,
+    writeContract, data, isError, isSuccess, isPending, error,
   } = useWriteContract();
 
-  return {
-    writeContract: (args?: any[]) => writeContract({
+  const creatProject = (args: Array<any>) => {
+    writeContract({
       abi: FundAbi,
       address: FundAddress,
       functionName: "createProject",
       args,
-    }),
+    });
+  };
+
+  // 返回状态
+  return {
+    creatProject,
     data,
     isError,
     isSuccess,
+    isPending,
+    error,
   };
 };
 
-export {
-  useReadCROAKBalanceOf,
-  useWriteNewProject,
-};
+export { useReadCROAKBalanceOf, useWriteNewProject };
