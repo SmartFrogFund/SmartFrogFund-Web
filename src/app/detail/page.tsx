@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { BaseError } from "wagmi";
 import { useSearchParams } from "next/navigation";
 
 import dayjs from "dayjs";
@@ -61,15 +62,15 @@ const DetailPage: React.FC = () => {
   // ]);
 
   const {
-    creatProject, data, isError, isSuccess, isPending, error: creatProError,
+    creatProject, data, isError, isSuccess, isPending, error: creatProError, failureReason,
   } = useWriteNewProject();
   // 信息表单
   const onFinish = (values: any) => {
-    creatProject(["测试Title", "测试desc", "https:111", 23, 1719523518]);
+    creatProject(["测试Title", "测试desc", "https:111", 23, 719523518]);
   };
   useEffect(() => {
-    console.log(data, isSuccess, isError, creatProError, formData);
-  }, [data, isSuccess, isPending, isError, creatProError]);
+    console.log((creatProError as BaseError)?.shortMessage, "@@@@");
+  }, [creatProError]);
   // 获取详情信息
   const {
     data: detailInfo,

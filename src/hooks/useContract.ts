@@ -45,7 +45,7 @@ const useReadCROAKBalanceOf = (args?: any[]): IuseReadCROAKBalanceOfProps => {
 
 const useWriteNewProject = () => {
   const {
-    writeContract, data, isError, isSuccess, isPending, error,
+    writeContract, data, isError, isSuccess, isPending, error, failureReason,
   } = useWriteContract();
 
   const creatProject = (args: Array<any>) => {
@@ -65,6 +65,7 @@ const useWriteNewProject = () => {
     isSuccess,
     isPending,
     error,
+    failureReason,
   };
 };
 
