@@ -9,6 +9,8 @@ import StepModal from "./_components/stepModal";
 import Inverment from "./_components/inverment";
 import Examine from "./_components/examine";
 
+import { useTheGraph } from "@/hooks/useGraph";
+import { useWriteNewProject } from "@/hooks/useContract";
 import {
   Button,
   DatePicker,
@@ -23,7 +25,10 @@ import "../../styles/detail.css";
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [formData] = Form.useForm();
+  const [isEditing, setIsEditing] = useState(false);
+  const query = Object.fromEntries(useSearchParams().entries());
+  const { projectId, isInvestors, hasInvest, allowExamine } = query;
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -41,7 +46,20 @@ const App: React.FC = () => {
   const onStep = () => {
     //申请进行下一步
   };
+  // const {
+  //   data,
+  //   isError,
+  //   isSuccess,
+  // } = useWriteNewProject([
+  //   '测试Title',
+  //   '测试desc',
+  //   'https:111',
+  //   23,
+  //   3453454
+  // ]);
 
+  const {writeContract,data,isError,isSuccess} = useWriteNewProject();
+  console.log(writeContract,'writeContract')
   //信息表单
   const onFinish = (values: any) => {
     const formattedValues = {
@@ -50,12 +68,28 @@ const App: React.FC = () => {
         ? values.projectDeadline.format("YYYY-MM-DD")
         : null,
     };
+    writeContract([
+      "测试Title",
+      "测试desc",
+      "https:111",
+      23,
+      3453454,
+    ]);
     console.log("Form data:", formattedValues);
+    console.log(data,isError,isSuccess,'data,isError,isSuccess')
   };
-  const [formData] = Form.useForm();
-  const [isEditing, setIsEditing] = useState(false);
-  const query = Object.fromEntries(useSearchParams().entries());
-  const { projectId, isInvestors, hasInvest, allowExamine } = query;
+
+  //获取详情信息
+    const { data:detailInfo, loading, error } = useTheGraph({
+      url: "https://api.studio.thegraph.com/query/76625/frogfund/version/latest",
+      query: `{
+    projectCreateds(projectId: ${projectId}) {    id    projectId    creator    goalAmount    deadline    _description    _link    blockTimestamp  }
+    fundsDistributeds(projectId: ${projectId}) {   id  projectId    amount  blockTimestamp  }
+    progressUpdateds (projectId: ${projectId}){   id   projectId   progress    details    blockTimestamp  }
+    progressRevieweds(projectId: ${projectId}) {    id    projectId       blockTimestamp  }
+    }`,
+    });
+
 
   const comTitle = () => {
     let title,
@@ -82,10 +116,12 @@ const App: React.FC = () => {
       title2,
     };
   };
+
   useEffect(() => {
     if (projectId) {
-      console.log("进来了");
+      console.log(detailInfo,'detailInfo')
       setIsEditing(true);
+
       // Fetch the project data by ID and populate the form (mocked here)
       const fetchedData = {
         projectName: "Existing Project",
@@ -107,7 +143,7 @@ const App: React.FC = () => {
       formData.setFieldsValue(fetchedData);
       console.log(formData, "formData");
     }
-  }, [projectId]);
+  }, [projectId,detailInfo]);
 
   return (
     <div className={`${styles.container}`}>
@@ -147,7 +183,7 @@ const App: React.FC = () => {
             },
           ]}
         >
-          <Input.TextArea rows={4} />
+          <Input.TextArea rows={4} disabled={isEditing} />
         </Form.Item>
 
         <Form.Item label="Project progress" name="projectProcessDetail">
@@ -214,7 +250,7 @@ const App: React.FC = () => {
             { required: true, message: "Please input the project link!" },
           ]}
         >
-          <Input addonBefore="https://" />
+          <Input addonBefore="https://" disabled={isEditing} />
         </Form.Item>
         <Form.Item
           label="Project Need ETH"
@@ -241,14 +277,14 @@ const App: React.FC = () => {
             disabled={isEditing}
           />
         </Form.Item>
-        {!!!isInvestors ? (
+        {!!!isInvestors && !isEditing ? (
           <Form.Item style={{ textAlign: "right" }}>
             <Button
               type="primary"
               htmlType="submit"
               style={{ backgroundColor: "#97D44A" }}
             >
-              {isEditing ? "Update" : "Submit"}
+              Submit
             </Button>
           </Form.Item>
         ) : (

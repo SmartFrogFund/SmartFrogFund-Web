@@ -8,7 +8,7 @@ import {
   ReadContractReturnType,
   UseReadContractReturnType,
 } from "wagmi";
-import { ERC20Abi, Erc20Address, FundAbi } from "@/abi";
+import { ERC20Abi, Erc20Address, FundAbi,FundAddress } from "@/abi";
 
 interface IUseContractProps {
   address: Address;
@@ -22,6 +22,8 @@ interface IuseReadCROAKBalanceOfProps {
   isLoading: boolean;
   isSuccess: boolean;
 }
+
+
 
 const useReadCROAKBalanceOf = (args?: any[]): IuseReadCROAKBalanceOfProps => {
   const { data, isError, isLoading, isSuccess } = useReadContract({
@@ -39,4 +41,23 @@ const useReadCROAKBalanceOf = (args?: any[]): IuseReadCROAKBalanceOfProps => {
   };
 };
 
-export { useReadCROAKBalanceOf };
+const useWriteNewProject = () => {
+  const { writeContract,data,isError,isSuccess} = useWriteContract()
+
+  return {
+    writeContract:(args?: any[])=>writeContract({
+      abi: FundAbi,
+      address: FundAddress,
+      functionName: "createProject",
+      args,
+    }),
+    data,
+    isError,
+    isSuccess
+  };
+};
+
+export { 
+  useReadCROAKBalanceOf,
+  useWriteNewProject
+ };
