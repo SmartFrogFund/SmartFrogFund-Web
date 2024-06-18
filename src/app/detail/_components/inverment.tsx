@@ -1,6 +1,10 @@
-import { InputNumber, Button, Form, Modal, Progress } from "antd";
+import React from "react";
+import {
+  InputNumber, Button, Form, Modal, Progress,
+} from "antd";
 import styles from "../../../styles/detail.module.scss";
 import "../../../styles/detail.css";
+
 interface InvermentProps {
   title: string;
 }
@@ -31,9 +35,8 @@ const Inverment: React.FC<InvermentProps> = ({ title }) => {
       });
   };
 
- 
   return (
-    <div className="flex justify-center items-center flex-col" >
+    <div className="flex justify-center items-center flex-col">
       <div className={styles.title}>{title}</div>
       <Form
         className={`${styles.formBox} detailFrom`}

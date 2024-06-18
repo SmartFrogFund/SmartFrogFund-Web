@@ -5,10 +5,12 @@ import {
   useWriteContract,
   useReadContracts,
   useWatchContractEvent,
-  ReadContractReturnType,
+  // ReadContractReturnType,
   UseReadContractReturnType,
 } from "wagmi";
-import { ERC20Abi, Erc20Address, FundAbi,FundAddress } from "@/abi";
+import {
+  ERC20Abi, Erc20Address, FundAbi, FundAddress,
+} from "@/abi";
 
 interface IUseContractProps {
   address: Address;
@@ -23,10 +25,10 @@ interface IuseReadCROAKBalanceOfProps {
   isSuccess: boolean;
 }
 
-
-
 const useReadCROAKBalanceOf = (args?: any[]): IuseReadCROAKBalanceOfProps => {
-  const { data, isError, isLoading, isSuccess } = useReadContract({
+  const {
+    data, isError, isLoading, isSuccess,
+  } = useReadContract({
     abi: ERC20Abi,
     address: Erc20Address,
     functionName: "balanceOf",
@@ -42,10 +44,12 @@ const useReadCROAKBalanceOf = (args?: any[]): IuseReadCROAKBalanceOfProps => {
 };
 
 const useWriteNewProject = () => {
-  const { writeContract,data,isError,isSuccess} = useWriteContract()
+  const {
+    writeContract, data, isError, isSuccess,
+  } = useWriteContract();
 
   return {
-    writeContract:(args?: any[])=>writeContract({
+    writeContract: (args?: any[]) => writeContract({
       abi: FundAbi,
       address: FundAddress,
       functionName: "createProject",
@@ -53,11 +57,11 @@ const useWriteNewProject = () => {
     }),
     data,
     isError,
-    isSuccess
+    isSuccess,
   };
 };
 
-export { 
+export {
   useReadCROAKBalanceOf,
-  useWriteNewProject
- };
+  useWriteNewProject,
+};

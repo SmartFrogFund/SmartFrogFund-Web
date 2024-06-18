@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
-import { Modal, Form, Input ,Button} from 'antd';
+import React, { useEffect } from "react";
+import {
+  Modal, Form, Input, Button,
+} from "antd";
 import styles from "../../../styles/detail.module.scss";
 import "../../../styles/detail.css";
 
@@ -10,10 +12,11 @@ interface StepModalProps {
   onOk: (data: any) => void;
   onCancel: () => void;
 }
-const placeholder = `1.what to do\n2.\n3.\n...`; // 使用换行符
+const placeholder = "1.what to do\n2.\n3.\n..."; // 使用换行符
 
-
-const StepModal: React.FC<StepModalProps> = ({ isModalOpen, initialData, onOk, onCancel ,isInvestors}) => {
+const StepModal: React.FC<StepModalProps> = ({
+  isModalOpen, initialData, onOk, onCancel, isInvestors,
+}) => {
   const [modalForm] = Form.useForm();
 
   useEffect(() => {
@@ -23,10 +26,10 @@ const StepModal: React.FC<StepModalProps> = ({ isModalOpen, initialData, onOk, o
   }, [initialData, modalForm]);
 
   const onFinish = () => {
-    modalForm.validateFields().then(values => {
+    modalForm.validateFields().then((values) => {
       onOk(values);
-    }).catch(info => {
-      console.log('Validate Failed:', info);
+    }).catch((info) => {
+      console.log("Validate Failed:", info);
     });
   };
 
@@ -50,27 +53,28 @@ const StepModal: React.FC<StepModalProps> = ({ isModalOpen, initialData, onOk, o
         style={{ width: 500 }}
         onFinish={onFinish}
       >
-        <Form.Item label="Step1(30%):" name="Step1" >
-          <Input.TextArea rows={4} placeholder={placeholder}/>
+        <Form.Item label="Step1(30%):" name="Step1">
+          <Input.TextArea rows={4} placeholder={placeholder} />
         </Form.Item>
         <Form.Item label="Step2(50%):" name="Step2">
-          <Input.TextArea rows={4} placeholder={placeholder}/>
+          <Input.TextArea rows={4} placeholder={placeholder} />
         </Form.Item>
         <Form.Item label="Step3(70%):" name="Step3">
-          <Input.TextArea rows={4} placeholder={placeholder}/>
+          <Input.TextArea rows={4} placeholder={placeholder} />
         </Form.Item>
         <Form.Item label="Step4(100%):" name="Step4">
-          <Input.TextArea rows={4} placeholder={placeholder}/>
+          <Input.TextArea rows={4} placeholder={placeholder} />
         </Form.Item>
-        {!isInvestors? (<Form.Item style={{ textAlign: "right" }}>
-          <Button type="primary" htmlType="submit" size='middle' style={{ backgroundColor: "#97D44A" }}>
-            submit
-          </Button>
-        </Form.Item>):''
-        }
+        {!isInvestors ? (
+          <Form.Item style={{ textAlign: "right" }}>
+            <Button type="primary" htmlType="submit" size="middle" style={{ backgroundColor: "#97D44A" }}>
+              submit
+            </Button>
+          </Form.Item>
+        ) : ""}
       </Form>
     </Modal>
-  );  
+  );
 };
 
 export default StepModal;

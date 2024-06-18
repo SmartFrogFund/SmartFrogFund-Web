@@ -5,10 +5,6 @@ import { useSearchParams } from "next/navigation";
 
 import dayjs from "dayjs";
 import Link from "next/link";
-import StepModal from "./_components/stepModal";
-import Inverment from "./_components/inverment";
-import Examine from "./_components/examine";
-
 import { useTheGraph } from "@/hooks/useGraph";
 import { useWriteNewProject } from "@/hooks/useContract";
 import {
@@ -20,6 +16,10 @@ import {
   Progress,
   Popover,
 } from "antd";
+import StepModal from "./_components/stepModal";
+import Inverment from "./_components/inverment";
+import Examine from "./_components/examine";
+
 import styles from "../../styles/detail.module.scss";
 import "../../styles/detail.css";
 
@@ -28,7 +28,9 @@ const App: React.FC = () => {
   const [formData] = Form.useForm();
   const [isEditing, setIsEditing] = useState(false);
   const query = Object.fromEntries(useSearchParams().entries());
-  const { projectId, isInvestors, hasInvest, allowExamine } = query;
+  const {
+    projectId, isInvestors, hasInvest, allowExamine,
+  } = query;
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -44,7 +46,7 @@ const App: React.FC = () => {
   };
 
   const onStep = () => {
-    //申请进行下一步
+    // 申请进行下一步
   };
   // const {
   //   data,
@@ -58,9 +60,11 @@ const App: React.FC = () => {
   //   3453454
   // ]);
 
-  const {writeContract,data,isError,isSuccess} = useWriteNewProject();
-  console.log(writeContract,'writeContract')
-  //信息表单
+  const {
+    writeContract, data, isError, isSuccess,
+  } = useWriteNewProject();
+  console.log(writeContract, "writeContract");
+  // 信息表单
   const onFinish = (values: any) => {
     const formattedValues = {
       ...values,
@@ -68,40 +72,37 @@ const App: React.FC = () => {
         ? values.projectDeadline.format("YYYY-MM-DD")
         : null,
     };
-    writeContract([
-      "测试Title",
-      "测试desc",
-      "https:111",
-      23,
-      3453454,
-    ]);
+    writeContract(["测试Title", "测试desc", "https:111", 23, 3453454]);
     console.log("Form data:", formattedValues);
-    console.log(data,isError,isSuccess,'data,isError,isSuccess')
+    console.log(data, isError, isSuccess, "data,isError,isSuccess");
   };
 
-  //获取详情信息
-    const { data:detailInfo, loading, error } = useTheGraph({
-      url: "https://api.studio.thegraph.com/query/76625/frogfund/version/latest",
-      query: `{
+  // 获取详情信息
+  const {
+    data: detailInfo,
+    loading,
+    error,
+  } = useTheGraph({
+    url: "https://api.studio.thegraph.com/query/76625/frogfund/version/latest",
+    query: `{
     projectCreateds(projectId: ${projectId}) {    id    projectId    creator    goalAmount    deadline    _description    _link    blockTimestamp  }
     fundsDistributeds(projectId: ${projectId}) {   id  projectId    amount  blockTimestamp  }
     progressUpdateds (projectId: ${projectId}){   id   projectId   progress    details    blockTimestamp  }
     progressRevieweds(projectId: ${projectId}) {    id    projectId       blockTimestamp  }
     }`,
-    });
-
+  });
 
   const comTitle = () => {
-    let title,
-      title2 = "";
-    if (!!projectId) {
-      if (!!isInvestors) {
+    let title;
+    let title2 = "";
+    if (projectId) {
+      if (isInvestors) {
         title = "Project info";
-        if (!!hasInvest) {
-          //审核组件
+        if (hasInvest) {
+          // 审核组件
           title2 = "Project progress increased from 30% to 50%";
         } else {
-          //投资组件
+          // 投资组件
           title2 = "Investment information";
         }
       } else {
@@ -119,7 +120,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (projectId) {
-      console.log(detailInfo,'detailInfo')
+      console.log(detailInfo, "detailInfo");
       setIsEditing(true);
 
       // Fetch the project data by ID and populate the form (mocked here)
@@ -136,14 +137,14 @@ const App: React.FC = () => {
         },
         projectDeadline: "2023-12-31",
       };
-      fetchedData.projectDeadline = dayjs(
-        fetchedData.projectDeadline,
-        "YYYY-MM-DD"
-      );
+      // fetchedData.projectDeadline = dayjs(
+      //   fetchedData.projectDeadline,
+      //   "YYYY-MM-DD",
+      // );
       formData.setFieldsValue(fetchedData);
       console.log(formData, "formData");
     }
-  }, [projectId,detailInfo]);
+  }, [projectId, detailInfo]);
 
   return (
     <div className={`${styles.container}`}>
@@ -154,7 +155,7 @@ const App: React.FC = () => {
       <Form
         disabled={!!isInvestors}
         className={`${styles.formBox} detailFrom ${
-          !!isInvestors ? `${styles.isInvestors}` : ""
+          isInvestors ? `${styles.isInvestors}` : ""
         }`}
         labelCol={{ span: 7 }}
         wrapperCol={{ span: 24 }}
@@ -212,18 +213,16 @@ const App: React.FC = () => {
               Details
             </Button>
 
-            {isEditing && !!!isInvestors ? (
+            {isEditing && !isInvestors ? (
               <Popover
                 placement="rightTop"
                 overlayStyle={{ width: "200px" }}
-                title={"notice:"}
-                content={
-                  "It needs to be approved before it can proceed to the next step"
-                }
+                title="notice:"
+                content="It needs to be approved before it can proceed to the next step"
               >
                 <Button
                   ghost
-                  className={`stepBtn`}
+                  className="stepBtn"
                   disabled={isEditing}
                   onClick={onStep}
                 >
@@ -233,7 +232,7 @@ const App: React.FC = () => {
             ) : (
               <Button
                 ghost
-                className={`stepBtn`}
+                className="stepBtn"
                 disabled={isEditing}
                 onClick={onStep}
               >
@@ -277,7 +276,7 @@ const App: React.FC = () => {
             disabled={isEditing}
           />
         </Form.Item>
-        {!!!isInvestors && !isEditing ? (
+        {!isInvestors && !isEditing ? (
           <Form.Item style={{ textAlign: "right" }}>
             <Button
               type="primary"
@@ -300,7 +299,7 @@ const App: React.FC = () => {
         onCancel={handleCancel}
       />
 
-      {!!isInvestors && !!!hasInvest ? (
+      {!!isInvestors && !hasInvest ? (
         <Inverment title={comTitle().title2} />
       ) : (
         ""
