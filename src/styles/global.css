@@ -22,3 +22,16 @@ body, html {
   padding: 0 !important;
   font-size: 16px;
 }
+
+.bobbing {
+  animation: bob 2.5s infinite;
+}
+
+@keyframes bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}

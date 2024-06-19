@@ -1,6 +1,10 @@
-import { Input,InputNumber, Button, Form, Modal, Progress } from "antd";
+import React from "react";
+import {
+  Input, InputNumber, Button, Form, Modal, Progress,
+} from "antd";
 import styles from "../../../styles/detail.module.scss";
 import "../../../styles/detail.css";
+
 interface InvermentProps {
   title: string;
 }
@@ -8,18 +12,18 @@ interface InvermentProps {
 const Inverment: React.FC<InvermentProps> = ({ title }) => {
   const { confirm } = Modal;
   const [formData] = Form.useForm();
-const agreeCB = ()=>{
+  const agreeCB = () => {
     confirm({
-        title: "Examine",
-        content: `Are you agree Project progress increased from 30% to 50%`,
-        onOk() {
-          console.log("OK");
-        },
-        onCancel() {
-          console.log("Cancel");
-        },
-      });
-}
+      title: "Examine",
+      content: "Are you agree Project progress increased from 30% to 50%",
+      onOk() {
+        console.log("OK");
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
   const showConfirm = () => {
     formData
       .validateFields()
@@ -52,7 +56,7 @@ const agreeCB = ()=>{
     console.log("Form data:", formattedValues);
   };
   return (
-    <div className="flex justify-center items-center flex-col" >
+    <div className="flex justify-center items-center flex-col">
       <div className={styles.title}>{title}</div>
       <Form
         className={`${styles.formBox} detailFrom`}
@@ -75,9 +79,9 @@ const agreeCB = ()=>{
           />
         </Form.Item>
         <Form.Item
-           label="schedule Description"
-           name="scheduleDescription"
-            
+          label="schedule Description"
+          name="scheduleDescription"
+
         >
           <div
             style={{
@@ -91,14 +95,14 @@ const agreeCB = ()=>{
           </div>
         </Form.Item>
         <Form.Item style={{ textAlign: "right" }}>
-            <Button
-              type="primary"
-              onClick={agreeCB}
-              style={{ backgroundColor: "#97D44A" }}
-            >
-                agree
-            </Button>
-          </Form.Item>
+          <Button
+            type="primary"
+            onClick={agreeCB}
+            style={{ backgroundColor: "#97D44A" }}
+          >
+            agree
+          </Button>
+        </Form.Item>
       </Form>
     </div>
   );
