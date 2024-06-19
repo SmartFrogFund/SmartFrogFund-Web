@@ -5,7 +5,7 @@ const layout = ({ children }: { children: React.ReactNode }) => (
   <div className=" h-full bg-[#0F030F]">
     <Header />
     <Suspense fallback={<div>loading...</div>}>
-    {children}
+      {children}
     </Suspense>
   </div>
 );
