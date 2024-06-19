@@ -7,7 +7,8 @@ function ActionBar() {
       <div className="h-full max-w-screen-md m-auto flex flex-row items-center justify-center">
         <Link
           href="/detail"
-          className="bg-[#4caf50] rounded-2xl leading-8 px-3 w-6/12 text-center"
+          className="font-bold bg-[#4caf50] rounded-2xl leading-8 px-3 w-6/12 text-center hover:bg-[rgb(97,208,102)]
+          hover:scale-105"
         >
           Create Project
         </Link>

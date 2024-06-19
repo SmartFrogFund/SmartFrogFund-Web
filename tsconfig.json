@@ -41,7 +41,7 @@
         "**/*.tsx",
         ".next/types/**/*.ts",
         "File.js",
-        "src/lib/swagger.js"
+        "src/lib/swagger.js",
     ],
     "exclude": [
         "node_modules"

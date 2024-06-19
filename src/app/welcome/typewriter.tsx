@@ -4,7 +4,7 @@ type IProps = {
   text: string;
   speed?: number;
 };
-const Typewriter: FC<IProps> = ({ text, speed = 100 }) => {
+const Typewriter: FC<IProps> = ({ text, speed = 70 }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [index, setIndex] = useState(0);
 
@@ -17,7 +17,7 @@ const Typewriter: FC<IProps> = ({ text, speed = 100 }) => {
       return () => clearTimeout(timeout);
     }
   }, [index, text, displayedText, speed]);
-  return <div className="text-3xl font-bold text-center">{displayedText}</div>;
+  return <div className=" text-3xl font-bold text-center text-nowrap z-[1]">{displayedText}</div>;
 };
 
 export default Typewriter;

@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { mainStore, subStore } from "../stores/main.store";
 import WelcomePage from "./welcome/page";
+import Loading from "./lodaing";
 
 const Page = observer(() => {
   const handleChangeName = () => {
@@ -17,7 +18,7 @@ const Page = observer(() => {
 
   return (
     <div
-      className="h-full"
+      className="h-full  bg-[#0F030F] "
       style={{
         background: " linear-gradient(155deg, #ffffff 0%, #4788d8 100%)",
       }}
@@ -51,6 +52,7 @@ const Page = observer(() => {
         </Button>
       </Flex> */}
       <WelcomePage />
+      {/* <Loading /> */}
     </div>
   );
 });

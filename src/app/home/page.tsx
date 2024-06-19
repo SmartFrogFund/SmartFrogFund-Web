@@ -7,7 +7,7 @@ import LogoBg from "../../public/images/logo-bg-frog-rocket.png";
 function HomePage() {
   return (
     <div
-      className={`bg-[#0F030F] h-full text-white bg-no-repeat bg-fixed overflow-y-scroll`}
+      className="bg-[#0F030F] h-full text-white bg-no-repeat bg-fixed overflow-y-scroll"
       style={{
         backgroundImage: `url(${LogoBg.src})`,
         backgroundSize: "auto",
