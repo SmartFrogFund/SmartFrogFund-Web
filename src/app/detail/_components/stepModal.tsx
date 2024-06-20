@@ -67,7 +67,7 @@ const StepModal: React.FC<StepModalProps> = ({
         </Form.Item>
         {!isInvestors ? (
           <Form.Item style={{ textAlign: "right" }}>
-            <Button type="primary" htmlType="submit" size="middle" style={{ backgroundColor: "#97D44A" }}>
+            <Button type="primary" htmlType="submit" size="large" style={{ backgroundColor: "#97D44A" }}>
               submit
             </Button>
           </Form.Item>

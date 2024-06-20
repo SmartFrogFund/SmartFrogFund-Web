@@ -48,11 +48,11 @@ const useWriteNewProject = () => {
     writeContract, data, isError, isSuccess, isPending, error, failureReason,
   } = useWriteContract();
 
-  const creatProject = (args: Array<any>) => {
+  const creatProject = (args: Array<any>, functionName:string) => {
     writeContract({
       abi: FundAbi,
       address: FundAddress,
-      functionName: "createProject",
+      functionName,
       args,
     });
   };

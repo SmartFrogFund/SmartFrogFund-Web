@@ -27,7 +27,6 @@ import Examine from "./_components/examine";
 
 import styles from "../../styles/detail.module.scss";
 import "../../styles/detail.css";
-import { json } from "stream/consumers";
 
 dayjs.extend(utc);
 
@@ -56,6 +55,8 @@ interface DetailData {
   // other fields...
 }
 
+const graphApiUrl = process.env.NEXT_PUBLIC_GRAPH_API_URL;
+console.log(graphApiUrl, "graphApiUrl");
 const DetailPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData] = Form.useForm();
@@ -89,7 +90,7 @@ const DetailPage: React.FC = () => {
     setIsModalOpen(false);
     console.log("Updated data:", newData);
     const strNewData = JSON.stringify(newData);
-    console.log(strNewData);
+    console.log(strNewData, "strNewData");
     console.log(JSON.parse(strNewData));
   };
 
@@ -117,19 +118,19 @@ const DetailPage: React.FC = () => {
     loading,
     error,
   } = useTheGraph({
-    url: "https://api.studio.thegraph.com/query/76625/frogfund/version/latest",
-    query: `{
-      projectCreateds(projectId: ${projectId}) {    id    projectId    creator    goalAmount    deadline    _description    _link    blockTimestamp  }
-      fundsDistributeds(projectId: ${projectId}) {   id  projectId    amount  blockTimestamp  }
-      progressUpdateds (projectId: ${projectId}){   id   projectId   progress    details    blockTimestamp  }
-      progressRevieweds(projectId: ${projectId}) {    id    projectId       blockTimestamp  }
-      }`,
+    url: graphApiUrl || "",
     // query: `{
-    //   projectCreateds {    id    projectId    creator    goalAmount    deadline    _description    _link    blockTimestamp  }
-    //   fundsDistributeds {   id  projectId    amount  blockTimestamp  }
-    //   progressUpdateds {   id   projectId   progress    details    blockTimestamp  }
-    //   progressRevieweds {    id    projectId       blockTimestamp  }
+    //   projectCreateds(projectId: ${projectId}) {    id    projectId    creator    goalAmount    deadline    _description    _link    blockTimestamp  }
+    //   fundsDistributeds(projectId: ${projectId}) {   id  projectId    amount  blockTimestamp  }
+    //   progressUpdateds (projectId: ${projectId}){   id   projectId   progress    details    blockTimestamp  }
+    //   progressRevieweds(projectId: ${projectId}) {    id    projectId       blockTimestamp  }
     //   }`,
+    query: `{
+      projectCreateds {    id    projectId    creator    goalAmount    deadline    _description    _link    blockTimestamp  }
+      fundsDistributeds {   id  projectId    amount  blockTimestamp  }
+      progressUpdateds {   id   projectId   progress    details    blockTimestamp  }
+      progressRevieweds {    id    projectId       blockTimestamp  }
+      }`,
   });
 
   const {
@@ -138,18 +139,6 @@ const DetailPage: React.FC = () => {
 
   // loading及异常
   const [messageApi, contextHolder] = message.useMessage();
-  useEffect(() => {
-    console.log(isError, creatProError, failureReason, "isError");
-    console.log((creatProError as BaseError)?.shortMessage, "@@@@");
-    const content = (creatProError as BaseError)?.shortMessage;
-    if (isError) {
-      messageApi.open({
-        type: "error",
-        content,
-      });
-    }
-  }, [isError]);
-
   useEffect(() => {
     console.log(isPending);
     if (isPending) {
@@ -162,7 +151,21 @@ const DetailPage: React.FC = () => {
       // Dismiss manually and asynchronously
       setTimeout(messageApi.destroy, 1500);
     }
-  }, [isPending]);
+    if (isError) {
+      console.log(isError, creatProError, failureReason, "isError");
+      console.log((creatProError as BaseError)?.shortMessage, "@@@@");
+      const content = (creatProError as BaseError)?.shortMessage;
+      if (isError) {
+        messageApi.open({
+          type: "error",
+          content,
+        });
+      }
+    }
+    if (isSuccess) {
+      console.log(isSuccess, "isSuccess");
+    }
+  }, [isPending, isError, isSuccess]);
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -173,6 +176,7 @@ const DetailPage: React.FC = () => {
     } = values;
     // 转化为UTC时间戳
     const projectDeadlineUTC = projectDeadline ? dayjs(projectDeadline).utc().valueOf() : null;
+
     const projectNeedETHForWei = parseEther(String(projectNeedETH));
     const args = [
       projectName,
@@ -182,7 +186,7 @@ const DetailPage: React.FC = () => {
       projectDeadlineUTC,
     ];
     console.log(args, "args");
-    creatProject(args);
+    creatProject(args, "createProject");
   };
 
   const comTitle = () => {
@@ -244,8 +248,11 @@ const DetailPage: React.FC = () => {
       // const processPercent = ProcessInfo.progress || 0;
       const processPercent = 10;
       setPercent(processPercent);
-      // const text =
-      // }
+      // eslint-disable-next-line quotes
+      const text = '{"Step1":"1.我测试一下\\n2.测试测试","Step2":"1.我测试一下\\n2.测试测试","Step3":"1.我测试一下\\n2.测试测试\\n3.测试一下嘛"}';
+      console.log(JSON.parse(text), "text");
+      const newProcessFor = JSON.parse(text);
+      setProcessForm(newProcessFor);
     }
   }, [projectId, detailsRes]);
 
@@ -400,7 +407,7 @@ const DetailPage: React.FC = () => {
       <StepModal
         isInvestors={!!isInvestors}
         isModalOpen={isModalOpen}
-        initialData={formData.getFieldValue("projectProcessDetail")}
+        initialData={processForm}
         onOk={handleOk}
         onCancel={handleCancel}
       />
