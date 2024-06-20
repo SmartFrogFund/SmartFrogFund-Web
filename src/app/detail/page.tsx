@@ -37,6 +37,7 @@ interface ProjectCreated {
   deadline:string;
   goalAmount:string;
   creator:string;
+  _title:string;
   // other fields...
 }
 
@@ -68,13 +69,32 @@ const DetailPage: React.FC = () => {
     Step3: "",
     Step4: "",
   });
-  const percentEnum = {
-    0: 0,
-    1: 30,
-    2: 50,
-    3: 70,
-    4: 100,
-  };
+  const stepToPercent = new Map([
+    [0, 0],
+    [1, 30],
+    [2, 50],
+    [3, 70],
+    [4, 100],
+  ]);
+
+  const percentToStep = new Map([
+    [0, 0],
+    [30, 1],
+    [50, 2],
+    [70, 3],
+    [100, 4],
+  ]);
+  const percentToStepName = new Map([
+    [30, "Step1"],
+    [50, "Step2"],
+    [70, "Step3"],
+    [100, "Step4"],
+  ]);
+  const {
+    creatProject, data, isError, isSuccess, isPending, error: creatProError, failureReason,
+  } = useWriteNewProject();
+    // loading及异常
+  const [messageApi, contextHolder] = message.useMessage();
   // 编辑
   const [isEditing, setIsEditing] = useState(false);
   // 非创建人(投资人->已投资或潜在投资)
@@ -87,11 +107,32 @@ const DetailPage: React.FC = () => {
   } = query;
 
   const handleOk = (newData: any) => {
-    setIsModalOpen(false);
     console.log("Updated data:", newData);
-    const strNewData = JSON.stringify(newData);
-    console.log(strNewData, "strNewData");
-    console.log(JSON.parse(strNewData));
+
+    const updateStep = percentToStep.get(percent);
+
+    // 百分比不符合规则
+    if (updateStep === undefined) {
+      messageApi.open({
+        type: "error",
+        content: "Percentages are not in accordance with the rules of the contract",
+      });
+      return;
+    }
+    const updatePercent = stepToPercent.get(updateStep + 1);
+
+    if (updatePercent === undefined) return;
+
+    const stepName = percentToStepName.get(updatePercent);
+
+    if (stepName === undefined) return;
+    const args = [
+      Number(projectId),
+      updatePercent,
+      newData[stepName],
+    ];
+    creatProject(args, "updateProgress");
+    setIsModalOpen(false);
   };
 
   const handleCancel = () => {
@@ -119,26 +160,19 @@ const DetailPage: React.FC = () => {
     error,
   } = useTheGraph({
     url: graphApiUrl || "",
-    // query: `{
-    //   projectCreateds(projectId: ${projectId}) {    id    projectId    creator    goalAmount    deadline    _description    _link    blockTimestamp  }
-    //   fundsDistributeds(projectId: ${projectId}) {   id  projectId    amount  blockTimestamp  }
-    //   progressUpdateds (projectId: ${projectId}){   id   projectId   progress    details    blockTimestamp  }
-    //   progressRevieweds(projectId: ${projectId}) {    id    projectId       blockTimestamp  }
-    //   }`,
     query: `{
-      projectCreateds {    id    projectId    creator    goalAmount    deadline    _description    _link    blockTimestamp  }
-      fundsDistributeds {   id  projectId    amount  blockTimestamp  }
-      progressUpdateds {   id   projectId   progress    details    blockTimestamp  }
-      progressRevieweds {    id    projectId       blockTimestamp  }
+      projectCreateds(where:{projectId: ${projectId}}) {    id    projectId    creator    goalAmount  _title  deadline    _description    _link    blockTimestamp  }
+      fundsDistributeds(where:{projectId: ${projectId}}) {   id  projectId    amount  blockTimestamp  }
+      progressUpdateds (where:{projectId: ${projectId}}){   id   projectId   progress    details    blockTimestamp  }
+      progressRevieweds(where:{projectId: ${projectId}}) {    id    projectId       blockTimestamp  }
       }`,
+    // query: `{
+    //   projectCreateds {    id    projectId    creator    goalAmount    deadline _title   _description    _link    blockTimestamp  }
+    //   fundsDistributeds {   id  projectId    amount  blockTimestamp  }
+    //   progressUpdateds {   id   projectId   progress    details    blockTimestamp  }
+    //   progressRevieweds {    id    projectId       blockTimestamp  }
+    //   }`,
   });
-
-  const {
-    creatProject, data, isError, isSuccess, isPending, error: creatProError, failureReason,
-  } = useWriteNewProject();
-
-  // loading及异常
-  const [messageApi, contextHolder] = message.useMessage();
   useEffect(() => {
     console.log(isPending);
     if (isPending) {
@@ -149,7 +183,7 @@ const DetailPage: React.FC = () => {
       });
     } else {
       // Dismiss manually and asynchronously
-      setTimeout(messageApi.destroy, 1500);
+      setTimeout(messageApi.destroy, 2500);
     }
     if (isError) {
       console.log(isError, creatProError, failureReason, "isError");
@@ -226,6 +260,7 @@ const DetailPage: React.FC = () => {
         const bigIntValue = BigInt(formInfo.goalAmount);
         const ethValue = formatEther(bigIntValue);
         const projectNeedETH = Number(ethValue);
+        const projectName = formInfo._title;
         const projectDeadlineNum = formInfo.deadline ? Number(formInfo.deadline) : null;
         const projectDeadline = projectDeadlineNum !== null ? dayjs.unix(projectDeadlineNum).utc() : null;
         console.log("address", address);
@@ -234,7 +269,7 @@ const DetailPage: React.FC = () => {
         if (address === creatorAddress) setIsInvestors(false);
         console.log(isInvestors, "isInvestors");
         const fetchedData = {
-          projectName: "Existing Project",
+          projectName,
           projectDescription: formInfo._description,
           projectNeedETH,
           projectLink: formInfo._link,
@@ -243,16 +278,20 @@ const DetailPage: React.FC = () => {
         formData.setFieldsValue(fetchedData);
         console.log(formData, "formData");
       }
-      const ProcessInfo = detailData.progressUpdateds && detailData.progressUpdateds.find((item) => item.projectId === projectId);
-      // if (ProcessInfo) {
-      // const processPercent = ProcessInfo.progress || 0;
-      const processPercent = 10;
-      setPercent(processPercent);
-      // eslint-disable-next-line quotes
-      const text = '{"Step1":"1.我测试一下\\n2.测试测试","Step2":"1.我测试一下\\n2.测试测试","Step3":"1.我测试一下\\n2.测试测试\\n3.测试一下嘛"}';
-      console.log(JSON.parse(text), "text");
-      const newProcessFor = JSON.parse(text);
-      setProcessForm(newProcessFor);
+      const { progressUpdateds } = detailData;
+
+      if (!progressUpdateds?.length) {
+        setPercent(0);
+      } else {
+        const maxProcessObject = progressUpdateds.reduce((max, obj) => (obj.progress > max.progress ? obj : max), progressUpdateds[0]);
+        console.log(maxProcessObject); // 可选：调试输出
+        // 根据你的需要进行操作，比如设置percent
+        setPercent(maxProcessObject.progress);
+      }
+      // const text = '{"Step1":"1.我测试一下\\n2.测试测试","Step2":"1.我测试一下\\n2.测试测试","Step3":"1.我测试一下\\n2.测试测试\\n3.测试一下嘛"}';
+      // console.log(JSON.parse(text), "text");
+      // const newProcessFor = JSON.parse(text);
+      // setProcessForm(newProcessFor);
     }
   }, [projectId, detailsRes]);
 
@@ -324,7 +363,7 @@ const DetailPage: React.FC = () => {
           ]}
         >
           <DatePicker
-            format="YYYY-MM-DD"
+            showTime={{ format: "HH:mm" }}
             style={{ width: 200 }}
             disabled={isEditing}
             disabledDate={disabledDate}
@@ -405,7 +444,8 @@ const DetailPage: React.FC = () => {
       </Form>
 
       <StepModal
-        isInvestors={!!isInvestors}
+        percent={percent}
+        isInvestors={isInvestors}
         isModalOpen={isModalOpen}
         initialData={processForm}
         onOk={handleOk}
