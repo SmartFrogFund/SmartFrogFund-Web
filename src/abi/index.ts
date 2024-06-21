@@ -97,6 +97,12 @@ export const FundAbi = [
         name: "approved",
         type: "bool",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "currentProgress",
+        type: "uint256",
+      },
     ],
     name: "ProgressReviewed",
     type: "event",
@@ -140,6 +146,24 @@ export const FundAbi = [
         internalType: "address",
         name: "creator",
         type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_description",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_link",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_title",
+        type: "string",
       },
       {
         indexed: false,
@@ -238,6 +262,25 @@ export const FundAbi = [
         internalType: "string",
         name: "",
         type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_projectId",
+        type: "uint256",
+      },
+    ],
+    name: "canSubmitNextProgress",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -403,6 +446,25 @@ export const FundAbi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "projectId",
+        type: "uint256",
+      },
+    ],
+    name: "getInvestors",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "_user",
         type: "address",
@@ -410,6 +472,11 @@ export const FundAbi = [
     ],
     name: "getPlatformBalance",
     outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
       {
         internalType: "uint256",
         name: "",
@@ -494,12 +561,60 @@ export const FundAbi = [
         type: "uint256",
       },
     ],
+    name: "progressApprovals",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     name: "progressDetails",
     outputs: [
       {
         internalType: "string",
         name: "",
         type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "progressDisapprovals",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
