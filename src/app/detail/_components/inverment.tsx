@@ -7,9 +7,10 @@ import "../../../styles/detail.css";
 
 interface InvermentProps {
   title: string;
+  inveronOk:(data: any) => void;
 }
 
-const Inverment: React.FC<InvermentProps> = ({ title }) => {
+const Inverment: React.FC<InvermentProps> = ({ title, inveronOk }) => {
   const { confirm } = Modal;
   const [formData] = Form.useForm();
 
@@ -23,7 +24,7 @@ const Inverment: React.FC<InvermentProps> = ({ title }) => {
           title: "Investment information",
           content: `Are you sure you want to invest in ${amount} ETH?`,
           onOk() {
-            console.log("OK");
+            inveronOk(1);
           },
           onCancel() {
             console.log("Cancel");

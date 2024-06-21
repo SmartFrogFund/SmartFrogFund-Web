@@ -48,7 +48,7 @@ const useWriteNewProject = () => {
     writeContract, data, isError, isSuccess, isPending, error, failureReason,
   } = useWriteContract();
 
-  const creatProject = (args: Array<any>, functionName:string) => {
+  const postCB = (args: Array<any>, functionName:string) => {
     writeContract({
       abi: FundAbi,
       address: FundAddress,
@@ -59,7 +59,7 @@ const useWriteNewProject = () => {
 
   // 返回状态
   return {
-    creatProject,
+    postCB,
     data,
     isError,
     isSuccess,

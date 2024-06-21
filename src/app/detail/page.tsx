@@ -11,6 +11,9 @@ import utc from "dayjs/plugin/utc";
 import Link from "next/link";
 import { useTheGraph } from "@/hooks/useGraph";
 import { useWriteNewProject } from "@/hooks/useContract";
+import { usePercentInfo } from "@/hooks/uesPercentInfo";
+import { toLowerCaseEthereumAddress } from "@/utils/util";
+
 import {
   Button,
   DatePicker,
@@ -18,43 +21,18 @@ import {
   Input,
   InputNumber,
   Progress,
-  Popover,
   message,
 } from "antd";
+import { DetailData } from "@/app/detail/_interface/detail";
 import StepModal from "./_components/stepModal";
 import Inverment from "./_components/inverment";
 import Examine from "./_components/examine";
+import Loading from "../lodaing";
 
 import styles from "../../styles/detail.module.scss";
 import "../../styles/detail.css";
 
 dayjs.extend(utc);
-
-interface ProjectCreated {
-  projectId: string;
-  _description:string;
-  _link:string;
-  deadline:string;
-  goalAmount:string;
-  creator:string;
-  _title:string;
-  // other fields...
-}
-
-interface progressUpdated {
-  projectId:string;
-  progress:number;
-  details:string;
-  // other fields...
-}
-
-interface DetailData {
-  projectCreateds?: ProjectCreated[];
-  progressUpdateds?:progressUpdated[];
-  // progressRevieweds?:progressReviewed[];
-  // fundsDistributeds?:fundsDistributed[];
-  // other fields...
-}
 
 const graphApiUrl = process.env.NEXT_PUBLIC_GRAPH_API_URL;
 console.log(graphApiUrl, "graphApiUrl");
@@ -91,21 +69,43 @@ const DetailPage: React.FC = () => {
     [100, "Step4"],
   ]);
   const {
-    creatProject, data, isError, isSuccess, isPending, error: creatProError, failureReason,
+    postCB, data, isError, isSuccess, isPending, error: creatProError, failureReason,
   } = useWriteNewProject();
-    // loading及异常
+  const { getPercentInfo } = usePercentInfo();
+  // loading及异常
   const [messageApi, contextHolder] = message.useMessage();
   // 编辑
   const [isEditing, setIsEditing] = useState(false);
   // 非创建人(投资人->已投资或潜在投资)
   const [isInvestors, setIsInvestors] = useState(false);
+  // (当前项目已投资/潜在投资用户)
+  const [hasInvest, setHasInvest] = useState(false);
+
+  const [graphLoading, setGraphLoading] = useState(false);
+
   // 时间格式处理
-  const disabledDate = (current:any) => current && current < dayjs().endOf("day");
+
+  const disabledDate = (current: any) => {
+    // 将 current 转换为 dayjs 对象，如果 current 为空，则返回 true，即禁用
+    const currentDayjs = current ? dayjs(current) : null;
+
+    // 获取当前时间的 dayjs 对象，并将精度缩小到分钟
+    const now = dayjs().second(0).millisecond(0);
+
+    // 如果 currentDayjs 存在且在当前时间之前，则禁用
+    return !!(currentDayjs && currentDayjs.isBefore(now));
+  };
   const query = Object.fromEntries(useSearchParams().entries());
   const {
-    projectId, hasInvest, allowExamine,
+    projectId,
   } = query;
 
+  // 投资金额
+  const inveronOk = (amount:any) => {
+    console.log(amount, typeof amount, "amount");
+  };
+
+  // 更新进度
   const handleOk = (newData: any) => {
     console.log("Updated data:", newData);
 
@@ -131,7 +131,8 @@ const DetailPage: React.FC = () => {
       updatePercent,
       newData[stepName],
     ];
-    creatProject(args, "updateProgress");
+    console.log(args, "进度args");
+    postCB(args, "updateProgress");
     setIsModalOpen(false);
   };
 
@@ -139,39 +140,24 @@ const DetailPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const onStep = () => {
-    // 申请进行下一步
-  };
-  // const {
-  //   data,
-  //   isError,
-  //   isSuccess,
-  // } = useWriteNewProject([
-  //   '测试Title',
-  //   '测试desc',
-  //   'https:111',
-  //   23,
-  //   3453454
-  // ]);
-    // 获取详情信息
   const {
     data: detailsRes,
     loading,
     error,
   } = useTheGraph({
     url: graphApiUrl || "",
-    query: `{
-      projectCreateds(where:{projectId: ${projectId}}) {    id    projectId    creator    goalAmount  _title  deadline    _description    _link    blockTimestamp  }
-      fundsDistributeds(where:{projectId: ${projectId}}) {   id  projectId    amount  blockTimestamp  }
-      progressUpdateds (where:{projectId: ${projectId}}){   id   projectId   progress    details    blockTimestamp  }
-      progressRevieweds(where:{projectId: ${projectId}}) {    id    projectId       blockTimestamp  }
-      }`,
-    // query: `{
-    //   projectCreateds {    id    projectId    creator    goalAmount    deadline _title   _description    _link    blockTimestamp  }
-    //   fundsDistributeds {   id  projectId    amount  blockTimestamp  }
-    //   progressUpdateds {   id   projectId   progress    details    blockTimestamp  }
-    //   progressRevieweds {    id    projectId       blockTimestamp  }
+    // query:  `{
+    //   projectCreateds(where:{projectId: ${projectId}}) {    id    projectId    creator    goalAmount  _title  deadline    _description    _link    blockTimestamp  }
+    //   fundsDistributeds(where:{projectId: ${projectId}}) {   id  projectId    amount  blockTimestamp  }
+    //   progressUpdateds (where:{projectId: ${projectId}}){   id   projectId   progress    details    blockTimestamp  }
+    //   progressRevieweds(where:{projectId: ${projectId}}) {    id    projectId       blockTimestamp  }
     //   }`,
+    query: `{
+      projectCreateds {    id    projectId    creator    goalAmount    deadline _title   _description    _link    blockTimestamp  }
+      fundsDistributeds {   id  projectId    amount  blockTimestamp  }
+      progressUpdateds {   id   projectId   progress    details    blockTimestamp  }
+      progressRevieweds {    id    projectId       blockTimestamp  }
+      }`,
   });
   useEffect(() => {
     console.log(isPending);
@@ -220,7 +206,7 @@ const DetailPage: React.FC = () => {
       projectDeadlineUTC,
     ];
     console.log(args, "args");
-    creatProject(args, "createProject");
+    postCB(args, "createProject");
   };
 
   const comTitle = () => {
@@ -250,7 +236,11 @@ const DetailPage: React.FC = () => {
   };
 
   useEffect(() => {
+    if (projectId) {
+      setGraphLoading(true);
+    }
     if (projectId && detailsRes) {
+      setGraphLoading(false);
       console.log(detailsRes, "detailsRes");
       setIsEditing(true);
       // Fetch the project data by ID and populate the form (mocked here)
@@ -261,12 +251,18 @@ const DetailPage: React.FC = () => {
         const ethValue = formatEther(bigIntValue);
         const projectNeedETH = Number(ethValue);
         const projectName = formInfo._title;
-        const projectDeadlineNum = formInfo.deadline ? Number(formInfo.deadline) : null;
-        const projectDeadline = projectDeadlineNum !== null ? dayjs.unix(projectDeadlineNum).utc() : null;
-        console.log("address", address);
-        // const creatorAddress = formInfo.creator;
-        const creatorAddress = "0x90F79bf6EB2c4f870365E785982E1f101E93b906";
-        if (address === creatorAddress) setIsInvestors(false);
+        const projectDeadlineNum = formInfo.deadline ? parseInt(formInfo.deadline, 10) / 1000 : null;
+        const offsetInMinutes = new Date().getTimezoneOffset();
+        const offsetHours = offsetInMinutes / 60 > 0 ? -(offsetInMinutes / 60) : Math.abs(offsetInMinutes / 60);
+        console.log(offsetHours, "offsetHours");
+        const projectDeadline = projectDeadlineNum !== null ? dayjs.unix(projectDeadlineNum).utc().utcOffset(offsetHours) : null;
+        const creatorAddress = formInfo.creator;
+        console.log("creatorAddress", creatorAddress, typeof creatorAddress);
+        console.log("address", address, typeof address);
+
+        // const creatorAddress = "0x90F79bf6EB2c4f870365E785982E1f101E93b906";
+        console.log(toLowerCaseEthereumAddress(address) !== creatorAddress, "address !== creatorAddress");
+        if (toLowerCaseEthereumAddress(address) !== creatorAddress) setIsInvestors(true);
         console.log(isInvestors, "isInvestors");
         const fetchedData = {
           projectName,
@@ -278,29 +274,29 @@ const DetailPage: React.FC = () => {
         formData.setFieldsValue(fetchedData);
         console.log(formData, "formData");
       }
-      const { progressUpdateds } = detailData;
+      // 获取进度信息
+      const { currentPercent, detailObj } = getPercentInfo(detailData);
+      setPercent(currentPercent);
+      setProcessForm(detailObj);
 
-      if (!progressUpdateds?.length) {
-        setPercent(0);
-      } else {
-        const maxProcessObject = progressUpdateds.reduce((max, obj) => (obj.progress > max.progress ? obj : max), progressUpdateds[0]);
-        console.log(maxProcessObject); // 可选：调试输出
-        // 根据你的需要进行操作，比如设置percent
-        setPercent(maxProcessObject.progress);
-      }
-      // const text = '{"Step1":"1.我测试一下\\n2.测试测试","Step2":"1.我测试一下\\n2.测试测试","Step3":"1.我测试一下\\n2.测试测试\\n3.测试一下嘛"}';
-      // console.log(JSON.parse(text), "text");
-      // const newProcessFor = JSON.parse(text);
-      // setProcessForm(newProcessFor);
+      // 判断当前用户是否已经投资过(潜在投资用户)
+      const hasInvestResult = detailData.projectFundeds && detailData.projectFundeds.find((item) => item.supporter === toLowerCaseEthereumAddress(address));
+      setHasInvest(!!hasInvestResult);
     }
   }, [projectId, detailsRes]);
 
   return (
     <div className={`${styles.container} mt-10 `}>
+      {
+      projectId && graphLoading
+        ? (
+          <Loading />
+        ) : ""
+    }
       <div className={styles.title}>{comTitle().title}</div>
       {contextHolder}
       <Form
-        disabled={!!isInvestors}
+        disabled={isInvestors}
         className={`${styles.formBox} detailFrom ${
           isInvestors ? `${styles.isInvestors}` : ""
         }`}
@@ -353,7 +349,7 @@ const DetailPage: React.FC = () => {
             },
           ]}
         >
-          <InputNumber disabled={isEditing} style={{ width: 200 }} />
+          <InputNumber disabled={isEditing} style={{ width: 210 }} />
         </Form.Item>
         <Form.Item
           label="Project Deadline"
@@ -364,10 +360,11 @@ const DetailPage: React.FC = () => {
         >
           <DatePicker
             showTime={{ format: "HH:mm" }}
-            style={{ width: 200 }}
+            style={{ width: 210 }}
             disabled={isEditing}
             disabledDate={disabledDate}
           />
+
         </Form.Item>
         {!isInvestors && !isEditing ? (
           <Form.Item style={{ textAlign: "right" }}>
@@ -408,10 +405,10 @@ const DetailPage: React.FC = () => {
                 onClick={showModal}
                 disabled={false}
               >
-                Details
+                {isInvestors ? "Detail" : "Next Step"}
               </Button>
 
-              {isEditing && !isInvestors ? (
+              {/* {isEditing && !isInvestors ? (
                 <Popover
                   placement="rightTop"
                   overlayStyle={{ width: "200px" }}
@@ -436,7 +433,7 @@ const DetailPage: React.FC = () => {
                 >
                   Next Step
                 </Button>
-              )}
+              )} */}
             </div>
           </Form.Item>
         ) : ""
@@ -452,13 +449,20 @@ const DetailPage: React.FC = () => {
         onCancel={handleCancel}
       />
 
-      {!!isInvestors && !hasInvest ? (
-        <Inverment title={comTitle().title2} />
-      ) : (
-        ""
-      )}
+      {
+      // !!isInvestors && !hasInvest ?
+      true
+        ? (
+          <Inverment
+            title={comTitle().title2}
+            inveronOk={inveronOk}
+          />
+        ) : (
+          ""
+        )
+}
 
-      {!!isInvestors && !!hasInvest && !!allowExamine ? (
+      {!!isInvestors && hasInvest ? (
         <Examine title={comTitle().title2} />
       ) : (
         ""
