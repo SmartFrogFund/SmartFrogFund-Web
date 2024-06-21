@@ -27,7 +27,6 @@ import Examine from "./_components/examine";
 
 import styles from "../../styles/detail.module.scss";
 import "../../styles/detail.css";
-import { json } from "stream/consumers";
 
 dayjs.extend(utc);
 
