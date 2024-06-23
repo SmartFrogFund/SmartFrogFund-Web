@@ -1,4 +1,5 @@
 import React from "react";
+import { formatEther, parseEther } from "viem";
 import {
   InputNumber, Button, Form, Modal, Progress,
 } from "antd";
@@ -7,24 +8,39 @@ import "../../../styles/detail.css";
 
 interface InvermentProps {
   title: string;
-  inveronOk:(data: any) => void;
+  inveronOk:(data: bigint) => void;
+  targetAmount:bigint|undefined
+  projectAmount:bigint|undefined
 }
 
-const Inverment: React.FC<InvermentProps> = ({ title, inveronOk }) => {
+const formatToTwoDecimalPlaces = (value: number): string => value.toFixed(2);
+const calculateRatio = (amountETH: bigint, targetAmountETH: bigint): string => {
+  const amount = Number(amountETH);
+  const targetAmount = Number(targetAmountETH);
+  const ratio = amount / targetAmount;
+  return formatToTwoDecimalPlaces(ratio);
+};
+
+const Inverment: React.FC<InvermentProps> = ({
+  title, inveronOk, targetAmount, projectAmount,
+}) => {
   const { confirm } = Modal;
   const [formData] = Form.useForm();
-
+  const amountETH = projectAmount ? formatEther(projectAmount) : 0;
+  const targetAmountETH = targetAmount ? formatEther(targetAmount) : 0;
+  const percent = projectAmount && targetAmount ? Number(calculateRatio(projectAmount, targetAmount)) * 100 : 0;
   const showConfirm = () => {
     formData
       .validateFields()
       .then((values) => {
         console.log(values, "values");
         const { amount } = values;
+        const weiAmount = parseEther(String(amount));
         confirm({
           title: "Investment information",
           content: `Are you sure you want to invest in ${amount} ETH?`,
           onOk() {
-            inveronOk(1);
+            inveronOk(weiAmount);
           },
           onCancel() {
             console.log("Cancel");
@@ -51,12 +67,14 @@ const Inverment: React.FC<InvermentProps> = ({ title, inveronOk }) => {
         <Form.Item label="Progress of crowdfunding" name="amount">
           <Progress
             type="circle"
-            percent={30}
+            percent={percent}
             strokeColor="#97D44A"
             trailColor="white"
             size={80}
           />
-          <span className="ml-2">3/5ETH</span>
+          <span className="ml-2">
+            {`${amountETH} / ${targetAmountETH}ETH`}
+          </span>
         </Form.Item>
         <Form.Item
           label="investment amount"

@@ -1,17 +1,19 @@
 import React from "react";
 import {
-  Input, InputNumber, Button, Form, Modal, Progress,
+  Input, Button, Form, Modal,
 } from "antd";
 import styles from "../../../styles/detail.module.scss";
 import "../../../styles/detail.css";
 
 interface InvermentProps {
   title: string;
+  scheduleDescription:string
 }
 
-const Inverment: React.FC<InvermentProps> = ({ title }) => {
+const Inverment: React.FC<InvermentProps> = ({ title, scheduleDescription }) => {
   const { confirm } = Modal;
   const [formData] = Form.useForm();
+  formData.setFieldsValue({ scheduleDescription });
   const agreeCB = () => {
     confirm({
       title: "Examine",
@@ -68,16 +70,6 @@ const Inverment: React.FC<InvermentProps> = ({ title }) => {
         style={{ width: 640 }}
         onFinish={onFinish}
       >
-        <Form.Item label="Project progress" name="amount">
-          <Progress
-            percent={75}
-            steps={4}
-            strokeColor="#97D44A"
-            trailColor="#B5C5A4"
-            size={40}
-            className={styles.progress}
-          />
-        </Form.Item>
         <Form.Item
           label="schedule Description"
           name="scheduleDescription"

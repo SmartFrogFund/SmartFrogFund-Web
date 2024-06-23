@@ -41,18 +41,19 @@ export const usePercentInfo = () => {
       Step4: "",
     };
     let percent:number|undefined = 0;
+    let examineDeatil = "";
     let newProgressRevieweds = [];
     let newProgressUpdateds: any[] = [];
     if (progressRevieweds?.length) {
       newProgressRevieweds = progressRevieweds.map((item) => ({
         blockTimestamp: Number(item.blockTimestamp),
-        currentProgress: Number(item.currentProgress) || 70,
+        currentProgress: Number(item.currentProgress),
       }));
       percent = findObjectWithMaxTimestamp(newProgressRevieweds)?.currentProgress;
     } else if (progressUpdateds?.length) {
       newProgressUpdateds = progressUpdateds.map((item) => ({
         blockTimestamp: Number(item.blockTimestamp),
-        currentProgress: Number(item.currentProgress) || 70,
+        currentProgress: Number(item.progress),
       }));
       percent = findObjectWithMaxTimestamp(newProgressUpdateds)?.currentProgress;
     }
@@ -65,11 +66,15 @@ export const usePercentInfo = () => {
           detailObj[key] = progressUpdateds?.find((_item) => _item.progress === String(item))?.details || "";
         }
       });
+      const nextPercent = percentList[percentList.indexOf(percent) + 1];
+      const stepKey = percentToStepName.get(nextPercent);
+      console.log(nextPercent, stepKey, "nextPercent");
+      examineDeatil = stepKey ? detailObj[stepKey] : "";
     }
-
     return {
       currentPercent: percent || 0,
       detailObj,
+      examineDeatil,
     };
   };
 

@@ -10,8 +10,9 @@ import utc from "dayjs/plugin/utc";
 
 import Link from "next/link";
 import { useTheGraph } from "@/hooks/useGraph";
-import { useWriteNewProject } from "@/hooks/useContract";
+import { useWriteNewProject, useGetProject } from "@/hooks/useContract";
 import { usePercentInfo } from "@/hooks/uesPercentInfo";
+
 import { toLowerCaseEthereumAddress } from "@/utils/util";
 
 import {
@@ -81,6 +82,14 @@ const DetailPage: React.FC = () => {
   // (当前项目已投资/潜在投资用户)
   const [hasInvest, setHasInvest] = useState(false);
 
+  // 当前项目众筹金额
+  const [projectAmount, setProjectAmount] = useState<bigint | undefined>(undefined);
+  // 当前项目目标金额
+  const [targetAmount, setTargetAmount] = useState<bigint | undefined>(undefined);
+
+  // 审核当前进度描述
+  const [scheduleDescription, setScheduleDescription] = useState("");
+
   const [graphLoading, setGraphLoading] = useState(false);
 
   // 时间格式处理
@@ -101,8 +110,9 @@ const DetailPage: React.FC = () => {
   } = query;
 
   // 投资金额
-  const inveronOk = (amount:any) => {
-    console.log(amount, typeof amount, "amount");
+  const inveronOk = (inverAmount:bigint) => {
+    console.log(inverAmount, typeof inverAmount, "amount");
+    postCB([projectId], "supportProjectWithEth", inverAmount);
   };
 
   // 更新进度
@@ -132,7 +142,7 @@ const DetailPage: React.FC = () => {
       newData[stepName],
     ];
     console.log(args, "进度args");
-    postCB(args, "updateProgress");
+    postCB(args, "updateProgress", undefined);
     setIsModalOpen(false);
   };
 
@@ -141,23 +151,29 @@ const DetailPage: React.FC = () => {
   };
 
   const {
+    data: projectsData,
+  } = useGetProject([Number(projectId || 0)]);
+  console.log(projectsData, "projectsData");
+
+  const {
     data: detailsRes,
     loading,
     error,
   } = useTheGraph({
     url: graphApiUrl || "",
-    // query:  `{
-    //   projectCreateds(where:{projectId: ${projectId}}) {    id    projectId    creator    goalAmount  _title  deadline    _description    _link    blockTimestamp  }
-    //   fundsDistributeds(where:{projectId: ${projectId}}) {   id  projectId    amount  blockTimestamp  }
-    //   progressUpdateds (where:{projectId: ${projectId}}){   id   projectId   progress    details    blockTimestamp  }
-    //   progressRevieweds(where:{projectId: ${projectId}}) {    id    projectId       blockTimestamp  }
-    //   }`,
     query: `{
-      projectCreateds {    id    projectId    creator    goalAmount    deadline _title   _description    _link    blockTimestamp  }
-      fundsDistributeds {   id  projectId    amount  blockTimestamp  }
-      progressUpdateds {   id   projectId   progress    details    blockTimestamp  }
-      progressRevieweds {    id    projectId       blockTimestamp  }
+      projectCreateds(where:{projectId: ${projectId}}) {    id    projectId    creator    goalAmount  _title  deadline    _description    _link    blockTimestamp  }
+      fundsDistributeds(where:{projectId: ${projectId}}) {   id  projectId    amount  blockTimestamp  }
+      progressUpdateds (where:{projectId: ${projectId}}){   id   projectId   progress    details    blockTimestamp  }
+      progressRevieweds(where:{projectId: ${projectId}}) {    id    projectId       blockTimestamp  }
+      projectFundeds(where:{projectId: ${projectId}}) {    supporter  }
       }`,
+    // query: `{
+    //   projectCreateds {    id    projectId    creator    goalAmount    deadline _title   _description    _link    blockTimestamp  }
+    //   fundsDistributeds {   id  projectId    amount  blockTimestamp  }
+    //   progressUpdateds {   id   projectId   progress    details    blockTimestamp  }
+    //   progressRevieweds {    id    projectId       blockTimestamp  }
+    //   }`,
   });
   useEffect(() => {
     console.log(isPending);
@@ -167,23 +183,21 @@ const DetailPage: React.FC = () => {
         content: "Action in progress..",
         duration: 0,
       });
-    } else {
+    } else if (!isPending && isSuccess) {
+      console.log(isSuccess, "isSuccess");
       // Dismiss manually and asynchronously
       setTimeout(messageApi.destroy, 2500);
-    }
-    if (isError) {
-      console.log(isError, creatProError, failureReason, "isError");
-      console.log((creatProError as BaseError)?.shortMessage, "@@@@");
-      const content = (creatProError as BaseError)?.shortMessage;
+    } else if (!isPending && isError) {
+      setTimeout(messageApi.destroy, 2500);
       if (isError) {
+        console.log(isError, creatProError, failureReason, "isError");
+        console.log((creatProError as BaseError)?.shortMessage, "@@@@");
+        const content = (creatProError as BaseError)?.shortMessage;
         messageApi.open({
           type: "error",
           content,
         });
       }
-    }
-    if (isSuccess) {
-      console.log(isSuccess, "isSuccess");
     }
   }, [isPending, isError, isSuccess]);
   const showModal = () => {
@@ -206,18 +220,19 @@ const DetailPage: React.FC = () => {
       projectDeadlineUTC,
     ];
     console.log(args, "args");
-    postCB(args, "createProject");
+    postCB(args, "createProject", undefined);
   };
 
   const comTitle = () => {
     let title;
     let title2 = "";
+    const nexrPercent = percentToStep.get(percent) ?? 0; // Provide a default value of 0 if undefined
     if (projectId) {
       if (isInvestors) {
         title = "Project info";
         if (hasInvest) {
           // 审核组件
-          title2 = "Project progress increased from 30% to 50%";
+          title2 = `Project progress increased from ${percent}% to ${stepToPercent.get(nexrPercent + 1)}%`;
         } else {
           // 投资组件
           title2 = "Investment information";
@@ -275,15 +290,20 @@ const DetailPage: React.FC = () => {
         console.log(formData, "formData");
       }
       // 获取进度信息
-      const { currentPercent, detailObj } = getPercentInfo(detailData);
+      const { currentPercent, detailObj, examineDeatil } = getPercentInfo(detailData);
+      console.log(currentPercent, detailObj, examineDeatil, "currentPercent");
       setPercent(currentPercent);
       setProcessForm(detailObj);
-
+      setScheduleDescription(examineDeatil);
       // 判断当前用户是否已经投资过(潜在投资用户)
       const hasInvestResult = detailData.projectFundeds && detailData.projectFundeds.find((item) => item.supporter === toLowerCaseEthereumAddress(address));
       setHasInvest(!!hasInvestResult);
     }
-  }, [projectId, detailsRes]);
+    if (projectsData && projectId) {
+      setProjectAmount(projectsData[5]);
+      setTargetAmount(projectsData[4]);
+    }
+  }, [projectId, detailsRes, projectsData]);
 
   return (
     <div className={`${styles.container} mt-10 `}>
@@ -381,62 +401,35 @@ const DetailPage: React.FC = () => {
         )}
 
         {
-        !isInvestors && isEditing ? (
-          <Form.Item label="Project progress" name="projectProcessDetail">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                height: "100%",
-              }}
-            >
-              <Progress
-                percent={percent}
-                steps={4}
-                strokeColor="#97D44A"
-                trailColor="#B5C5A4"
-                size={40}
-                className={styles.progress}
-              />
-              <Button
-                ghost
-                className={styles.processBtn}
-                onClick={showModal}
-                disabled={false}
-              >
-                {isInvestors ? "Detail" : "Next Step"}
-              </Button>
-
-              {/* {isEditing && !isInvestors ? (
-                <Popover
-                  placement="rightTop"
-                  overlayStyle={{ width: "200px" }}
-                  title="notice:"
-                  content="It needs to be approved before it can proceed to the next step"
-                >
-                  <Button
-                    ghost
-                    className="stepBtn"
-                    disabled={isEditing}
-                    onClick={onStep}
-                  >
-                    Next Step
-                  </Button>
-                </Popover>
-              ) : (
-                <Button
-                  ghost
-                  className="stepBtn"
-                  disabled={isEditing}
-                  onClick={onStep}
-                >
-                  Next Step
-                </Button>
-              )} */}
-            </div>
-          </Form.Item>
-        ) : ""
+         isEditing ? (
+           <Form.Item label="Project progress" name="projectProcessDetail">
+             <div
+               style={{
+                 display: "flex",
+                 justifyContent: "space-between",
+                 alignItems: "center",
+                 height: "100%",
+               }}
+             >
+               <Progress
+                 percent={percent}
+                 steps={4}
+                 strokeColor="#97D44A"
+                 trailColor="#B5C5A4"
+                 size={40}
+                 className={styles.progress}
+               />
+               <Button
+                 ghost
+                 className={styles.processBtn}
+                 onClick={showModal}
+                 disabled={false}
+               >
+                 {isInvestors ? "Detail" : "Next Step"}
+               </Button>
+             </div>
+           </Form.Item>
+         ) : ""
       }
       </Form>
 
@@ -450,20 +443,22 @@ const DetailPage: React.FC = () => {
       />
 
       {
-      // !!isInvestors && !hasInvest ?
-      true
+      isInvestors && !hasInvest
+      // true ?
         ? (
           <Inverment
             title={comTitle().title2}
             inveronOk={inveronOk}
+            targetAmount={targetAmount}
+            projectAmount={projectAmount}
           />
         ) : (
           ""
         )
-}
+      }
 
-      {!!isInvestors && hasInvest ? (
-        <Examine title={comTitle().title2} />
+      {isInvestors && hasInvest ? (
+        <Examine title={comTitle().title2} scheduleDescription={scheduleDescription} />
       ) : (
         ""
       )}

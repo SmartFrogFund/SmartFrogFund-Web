@@ -25,6 +25,13 @@ interface IuseReadCROAKBalanceOfProps {
   isSuccess: boolean;
 }
 
+interface userProjectsProps {
+  data: Array<any>;
+  isError: boolean;
+  isLoading: boolean;
+  isSuccess: boolean;
+}
+
 const useReadCROAKBalanceOf = (args?: any[]): IuseReadCROAKBalanceOfProps => {
   const {
     data, isError, isLoading, isSuccess,
@@ -43,16 +50,39 @@ const useReadCROAKBalanceOf = (args?: any[]): IuseReadCROAKBalanceOfProps => {
   };
 };
 
+const useGetProject = (args?: any[]):userProjectsProps => {
+  // const {
+  //   data, isError, isLoading, isSuccess,
+  // } = useReadContract();
+
+  const {
+    data, isError, isLoading, isSuccess,
+  } = useReadContract({
+    abi: FundAbi,
+    address: FundAddress,
+    functionName: "projects",
+    args,
+  });
+
+  return {
+    data: data as any[],
+    isError,
+    isLoading,
+    isSuccess,
+  };
+};
+
 const useWriteNewProject = () => {
   const {
     writeContract, data, isError, isSuccess, isPending, error, failureReason,
   } = useWriteContract();
 
-  const postCB = (args: Array<any>, functionName:string) => {
+  const postCB = (args: Array<any>, functionName:string, value:bigint|undefined) => {
     writeContract({
       abi: FundAbi,
       address: FundAddress,
       functionName,
+      value,
       args,
     });
   };
@@ -69,4 +99,4 @@ const useWriteNewProject = () => {
   };
 };
 
-export { useReadCROAKBalanceOf, useWriteNewProject };
+export { useReadCROAKBalanceOf, useWriteNewProject, useGetProject };

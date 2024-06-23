@@ -55,16 +55,16 @@ const StepModal: React.FC<StepModalProps> = ({
         onFinish={onFinish}
       >
         <Form.Item label="Step1(30%):" name="Step1">
-          <Input.TextArea rows={4} placeholder={placeholder} disabled={percent >= 30} />
+          <Input.TextArea rows={4} placeholder={placeholder} disabled={(percent >= 30) || isInvestors} />
         </Form.Item>
         <Form.Item label="Step2(50%):" name="Step2">
-          <Input.TextArea rows={4} placeholder={placeholder} disabled={percent >= 50 || percent < 30} />
+          <Input.TextArea rows={4} placeholder={placeholder} disabled={(percent >= 50 || percent < 30) || isInvestors} />
         </Form.Item>
         <Form.Item label="Step3(70%):" name="Step3">
-          <Input.TextArea rows={4} placeholder={placeholder} disabled={percent >= 70 || percent < 50} />
+          <Input.TextArea rows={4} placeholder={placeholder} disabled={(percent >= 70 || percent < 50) || isInvestors} />
         </Form.Item>
         <Form.Item label="Step4(100%):" name="Step4">
-          <Input.TextArea rows={4} placeholder={placeholder} disabled={percent >= 100 || percent < 70} />
+          <Input.TextArea rows={4} placeholder={placeholder} disabled={(percent >= 100 || percent < 70) || isInvestors} />
         </Form.Item>
         {!isInvestors ? (
           <Form.Item style={{ textAlign: "right" }}>
