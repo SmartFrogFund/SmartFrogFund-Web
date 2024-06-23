@@ -1,0 +1,11 @@
+@tailwind utilities;
+
+@layer utilities {
+    .backdrop-filter {
+      @apply backdrop-blur;
+    }
+  }
+  
+  .custom-shadow {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+  }

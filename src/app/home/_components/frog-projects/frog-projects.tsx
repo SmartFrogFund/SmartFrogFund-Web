@@ -1,12 +1,16 @@
-import React from "react";
+import React, {FC} from "react";
 import FrogItem from "./frog-item";
-import { FrogsData } from "./frog-mock";
+import {IFrogItem} from '../../interface/frog-project'
 
-function FrogProjects() {
+type IProps = {
+  projectList: Array<IFrogItem>
+}
+
+const FrogProjects: FC<IProps> = ({projectList}) => {
   return (
     <div className="flex flex-col gap-2 max-w-screen-md m-auto mt-2 mb-8">
-      {FrogsData.map((item) => (
-        <FrogItem frogData={item} />
+      {projectList.map((item) => (
+        <FrogItem key={item.id} frogData={item} />
       ))}
     </div>
   );
