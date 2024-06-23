@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { IFrogItem } from "../../interface/frog-project";
 import SvgIconFrog from "../../../../public/images/logo-frog.svg";
 import SvgIconCoin from "../../../../public/images/icon-coin.svg";
@@ -8,7 +9,7 @@ interface IProps {
   frogData: IFrogItem;
 }
 const FrogItem: FC<IProps> = ({ frogData }) => (
-  <div className="bg-[#b8c4a7] rounded-md hover:bg-[#4caf50] cursor-pointer h-24">
+  <Link href={`/detail/?projectId=${frogData.projectId}`} className="bg-[#b8c4a7] rounded-md hover:bg-[#4caf50] cursor-pointer h-24">
     <div className="flex">
       <Image
         className="w-8 h-8 rounded-md mt-3 ml-3"
@@ -29,11 +30,11 @@ const FrogItem: FC<IProps> = ({ frogData }) => (
             src={SvgIconCoin}
             alt="coin"
           />
-          <span>{`${frogData._gaolAmount} memecoin`}</span>
+          <span>{`${frogData.goalAmount} memecoin`}</span>
         </div>
       </div>
     </div>
-  </div>
+  </Link>
 );
 
 export default FrogItem;

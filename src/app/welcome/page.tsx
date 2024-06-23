@@ -8,10 +8,9 @@ import LogoBg from "../../public/images/logo-bg-frog-rocket.svg";
 
 const txt = "Leap to Your Dreams and Empower Your Journey to the Moon!";
 
-function HomePage() {
+function WelcomePage() {
   const imageRef = useRef(null);
   const handleMouseMove = (event) => {
-    debugger;
     const imageElement = event.currentTarget;
     const {
       left, top, width, height,
@@ -56,4 +55,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default WelcomePage;
