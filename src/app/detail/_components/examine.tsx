@@ -1,62 +1,122 @@
-import React from "react";
+import React, { useState } from "react";
 import {
-  Input, Button, Form, Modal,
+  Input, Button, Form, Modal, Radio, TableColumnsType, Table, Tag,
 } from "antd";
 import styles from "../../../styles/detail.module.scss";
-import "../../../styles/detail.css";
 
-interface InvermentProps {
+type examineDataType ={
+  comment:string,
+  approved:boolean
+}
+interface examineProps {
   title: string;
-  scheduleDescription:string
+  progressRevieweds:Array<any>;
+  percent:number;
+  examineOk:(data:examineDataType)=>void
 }
 
-const Inverment: React.FC<InvermentProps> = ({ title, scheduleDescription }) => {
+interface DataType {
+  key: React.Key;
+  approved: boolean;
+  comment: string;
+  blockTimestamp: string;
+  currentProgress:string;
+  Investor:string;
+}
+const convertTimestampToLocalTime = (timestamp:string) => {
+  // 将秒转换为毫秒
+  const date = new Date(Number(timestamp) * 1000);
+
+  // 使用本地时间
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // 月份从0开始，所以要加1
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+const Inverment: React.FC<examineProps> = ({
+  title, progressRevieweds, examineOk, percent,
+}) => {
   const { confirm } = Modal;
+  console.log(progressRevieweds, "progressRevieweds");
+  const newProgressRevieweds = progressRevieweds
+    .filter((item) => item.currentProgress === String(30))
+    .map((item) => ({
+      ...item,
+      time: convertTimestampToLocalTime(item.blockTimestamp),
+      key: item.id,
+    }));
+
+  console.log(newProgressRevieweds, "newProgressReviewedsnewProgressRevieweds");
   const [formData] = Form.useForm();
-  formData.setFieldsValue({ scheduleDescription });
+  const [modal, setModal] = useState(false);
+
+  console.log(convertTimestampToLocalTime("1719215421"), "convertTimestampToLocalTim");
+
+  console.log(percent, "percentpercent");
   const agreeCB = () => {
     confirm({
       title: "Examine",
-      content: "Are you agree Project progress increased from 30% to 50%",
+      content: "AConfirm submission",
       onOk() {
-        console.log("OK");
+        formData.validateFields().then((values) => {
+          console.log("OK", values);
+          examineOk(values);
+        });
       },
       onCancel() {
         console.log("Cancel");
       },
     });
   };
-  const showConfirm = () => {
-    formData
-      .validateFields()
-      .then((values) => {
-        console.log(values, "values");
-        const { amount } = values;
-        confirm({
-          title: "Investment information",
-          content: `Are you sure you want to invest in ${amount} ETH?`,
-          onOk() {
-            console.log("OK");
-          },
-          onCancel() {
-            console.log("Cancel");
-          },
-        });
-      })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
-      });
+
+  const showModal = () => {
+    setModal(true);
+  };
+  const onCancel = () => {
+    setModal(false);
+  };
+  const options = [
+    { label: "Yes", value: true },
+    { label: "No", value: false },
+  ];
+  const initialValues = {
+    approved: true,
+    auditOpinion: "",
   };
 
-  const onFinish = (values: any) => {
-    const formattedValues = {
-      ...values,
-      projectDeadline: values.projectDeadline
-        ? values.projectDeadline.format("YYYY-MM-DD")
-        : null,
-    };
-    console.log("Form data:", formattedValues);
-  };
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: "Investor",
+      dataIndex: "Investor",
+      width: 250,
+    },
+    {
+      title: "comment",
+      dataIndex: "comment",
+      width: 250,
+    },
+    {
+      title: "approved",
+      dataIndex: "approved",
+      width: 150,
+      render: (_, { approved }) => (
+        <Tag color={approved ? "green" : "volcano"}>
+          {approved ? "Approved" : "Not Approved"}
+        </Tag>
+      ),
+    },
+    {
+      title: "time",
+      dataIndex: "time",
+      width: 150,
+    },
+  ];
+
+  const data: DataType[] = newProgressRevieweds;
   return (
     <div className="flex justify-center items-center flex-col">
       <div className={styles.title}>{title}</div>
@@ -64,15 +124,34 @@ const Inverment: React.FC<InvermentProps> = ({ title, scheduleDescription }) => 
         className={`${styles.formBox} detailFrom`}
         labelCol={{ span: 7 }}
         wrapperCol={{ span: 24 }}
+        initialValues={initialValues}
         layout="horizontal"
         form={formData}
         size="large"
         style={{ width: 640 }}
-        onFinish={onFinish}
       >
         <Form.Item
-          label="schedule Description"
-          name="scheduleDescription"
+          label="Audit information"
+          style={{ textAlign: "right" }}
+        >
+          <Button
+            ghost
+            className={styles.processBtn}
+            onClick={showModal}
+          >
+            Detail
+          </Button>
+        </Form.Item>
+        <Form.Item
+          label="Be approved or not"
+          name="approved"
+        >
+          <Radio.Group options={options} />
+
+        </Form.Item>
+        <Form.Item
+          label="Audit opinion"
+          name="comment"
 
         >
           <div
@@ -83,7 +162,7 @@ const Inverment: React.FC<InvermentProps> = ({ title, scheduleDescription }) => 
               height: "100%",
             }}
           >
-            <Input.TextArea rows={4} disabled />
+            <Input.TextArea rows={4} />
           </div>
         </Form.Item>
         <Form.Item style={{ textAlign: "right" }}>
@@ -92,10 +171,21 @@ const Inverment: React.FC<InvermentProps> = ({ title, scheduleDescription }) => 
             onClick={agreeCB}
             style={{ backgroundColor: "#97D44A" }}
           >
-            agree
+            submit
           </Button>
         </Form.Item>
       </Form>
+
+      <Modal
+        title="Audit information"
+        className={`${styles.container} stepModal`}
+        open={modal}
+        width={800}
+        onCancel={onCancel}
+        footer={null}
+      >
+        <Table columns={columns} dataSource={data} scroll={{ y: 240 }} />
+      </Modal>
     </div>
   );
 };

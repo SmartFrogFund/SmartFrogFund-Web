@@ -18,9 +18,10 @@ export interface ProjectCreated {
   }
 export interface progressReviewed {
     projectId:string;
-    approved:boolean;
+    approved:string;
     blockTimestamp:string;
     currentProgress:string;
+    comment:string
     // other fields...
 }
 

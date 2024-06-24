@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { BaseError, useAccount } from "wagmi";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { formatEther, parseEther } from "viem";
 
 import dayjs from "dayjs";
@@ -69,6 +69,7 @@ const DetailPage: React.FC = () => {
     [70, "Step3"],
     [100, "Step4"],
   ]);
+  const router = useRouter();
   const {
     postCB, data, isError, isSuccess, isPending, error: creatProError, failureReason,
   } = useWriteNewProject();
@@ -79,7 +80,7 @@ const DetailPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   // 非创建人(投资人->已投资或潜在投资)
   const [isInvestors, setIsInvestors] = useState(false);
-  // (当前项目已投资/潜在投资用户)
+  // 项目是否已经达到众筹目标
   const [hasInvest, setHasInvest] = useState(false);
 
   // 当前项目众筹金额
@@ -87,8 +88,16 @@ const DetailPage: React.FC = () => {
   // 当前项目目标金额
   const [targetAmount, setTargetAmount] = useState<bigint | undefined>(undefined);
 
-  // 审核当前进度描述
-  const [scheduleDescription, setScheduleDescription] = useState("");
+  type ProgressReviewed = {
+    projectId:string;
+    approved:string;
+    blockTimestamp:string;
+    currentProgress:string;
+    comment:string
+    // 其他字段
+  };
+  // 审核信息数组
+  const [progressRevieweds, setProgressRevieweds] = useState<ProgressReviewed[]>([]);
 
   const [graphLoading, setGraphLoading] = useState(false);
 
@@ -108,6 +117,23 @@ const DetailPage: React.FC = () => {
   const {
     projectId,
   } = query;
+
+  // 审核回调
+
+  type examineDataType ={
+    comment:string,
+    approved:boolean
+  }
+
+  const examineOk = (examineData:examineDataType) => {
+    console.log(examineData, "examineData");
+    postCB([
+      projectId,
+      percent,
+      examineData.comment,
+      examineData.approved,
+    ], "reviewProgress", undefined);
+  };
 
   // 投资金额
   const inveronOk = (inverAmount:bigint) => {
@@ -165,7 +191,7 @@ const DetailPage: React.FC = () => {
       projectCreateds(where:{projectId: ${projectId}}) {    id    projectId    creator    goalAmount  _title  deadline    _description    _link    blockTimestamp  }
       fundsDistributeds(where:{projectId: ${projectId}}) {   id  projectId    amount  blockTimestamp  }
       progressUpdateds (where:{projectId: ${projectId}}){   id   projectId   progress    details    blockTimestamp  }
-      progressRevieweds(where:{projectId: ${projectId}}) {    id    projectId       blockTimestamp  }
+      progressRevieweds(where:{projectId: ${projectId}}) {    id    projectId    approved comment Investor  blockTimestamp currentProgress  }
       projectFundeds(where:{projectId: ${projectId}}) {    supporter  }
       }`,
     // query: `{
@@ -186,6 +212,8 @@ const DetailPage: React.FC = () => {
     } else if (!isPending && isSuccess) {
       console.log(isSuccess, "isSuccess");
       // Dismiss manually and asynchronously
+
+      router.push("/home", { scroll: false });
       setTimeout(messageApi.destroy, 2500);
     } else if (!isPending && isError) {
       setTimeout(messageApi.destroy, 2500);
@@ -238,7 +266,7 @@ const DetailPage: React.FC = () => {
           title2 = "Investment information";
         }
       } else {
-        title = "Project Update";
+        title = "Progress Update";
       }
     } else {
       title = "Project Registration";
@@ -290,18 +318,20 @@ const DetailPage: React.FC = () => {
         console.log(formData, "formData");
       }
       // 获取进度信息
-      const { currentPercent, detailObj, examineDeatil } = getPercentInfo(detailData);
-      console.log(currentPercent, detailObj, examineDeatil, "currentPercent");
+      const { currentPercent, detailObj } = getPercentInfo(detailData);
+      console.log(currentPercent, detailObj, "currentPercent");
       setPercent(currentPercent);
       setProcessForm(detailObj);
-      setScheduleDescription(examineDeatil);
-      // 判断当前用户是否已经投资过(潜在投资用户)
-      const hasInvestResult = detailData.projectFundeds && detailData.projectFundeds.find((item) => item.supporter === toLowerCaseEthereumAddress(address));
-      setHasInvest(!!hasInvestResult);
+
+      // 投资信息
+      if (detailData.progressRevieweds && detailData.progressRevieweds.length) {
+        setProgressRevieweds(detailData.progressRevieweds);
+      }
     }
     if (projectsData && projectId) {
       setProjectAmount(projectsData[5]);
       setTargetAmount(projectsData[4]);
+      setHasInvest(projectsData[8]);
     }
   }, [projectId, detailsRes, projectsData]);
 
@@ -458,7 +488,7 @@ const DetailPage: React.FC = () => {
       }
 
       {isInvestors && hasInvest ? (
-        <Examine title={comTitle().title2} scheduleDescription={scheduleDescription} />
+        <Examine title={comTitle().title2} percent={percent} progressRevieweds={progressRevieweds} examineOk={examineOk} />
       ) : (
         ""
       )}
