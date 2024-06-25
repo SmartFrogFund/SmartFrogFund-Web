@@ -42,6 +42,7 @@ function Header() {
         </p>
         <div>
           <ConnectButton
+            label="Connect wallet"
             chainStatus="icon"
             accountStatus="avatar"
             showBalance={false}

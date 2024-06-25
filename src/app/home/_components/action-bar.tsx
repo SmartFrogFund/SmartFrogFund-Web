@@ -23,15 +23,15 @@ const ActionBar:FC<IProps> = ({ isLogged, curTab, onChangeTab }) => (
         }
       </div>
       {
-        isLogged && (
-        <Link
-          href="/detail"
-          className="font-bold bg-[#4caf50] rounded-2xl leading-8 px-3 text-center hover:bg-[rgb(97,208,102)]
+        isLogged ? (
+          <Link
+            href="/detail"
+            className="font-bold bg-[#4caf50] rounded-2xl leading-8 px-3 text-center hover:bg-[rgb(97,208,102)]
           hover:scale-105"
-        >
-          Create Project
-        </Link>
-        )
+          >
+            Create Project
+          </Link>
+        ) : <span className="font-semibold">Now connect wallet to create a project</span>
       }
     </div>
   </div>
