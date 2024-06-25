@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { formatEther } from "viem";
 import { IFrogItem } from "../../interface/frog-project";
 import SvgIconFrog from "../../../../public/images/logo-frog.svg";
 import SvgIconCoin from "../../../../public/images/icon-coin.svg";
@@ -30,7 +31,7 @@ const FrogItem: FC<IProps> = ({ frogData }) => (
             src={SvgIconCoin}
             alt="coin"
           />
-          <span>{`${frogData.goalAmount} memecoin`}</span>
+          <span>{`${formatEther(BigInt(frogData.goalAmount))} ETH`}</span>
         </div>
       </div>
     </div>
