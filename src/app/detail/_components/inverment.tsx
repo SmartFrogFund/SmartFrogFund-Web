@@ -9,26 +9,15 @@ import "../../../styles/detail.css";
 interface InvermentProps {
   title: string;
   inveronOk:(data: bigint) => void;
-  targetAmount:bigint|undefined
-  projectAmount:bigint|undefined
+  loading:boolean;
 }
 
-const formatToTwoDecimalPlaces = (value: number): string => value.toFixed(2);
-const calculateRatio = (amountETH: bigint, targetAmountETH: bigint): string => {
-  const amount = Number(amountETH);
-  const targetAmount = Number(targetAmountETH);
-  const ratio = amount / targetAmount;
-  return formatToTwoDecimalPlaces(ratio);
-};
-
 const Inverment: React.FC<InvermentProps> = ({
-  title, inveronOk, targetAmount, projectAmount,
+  title, inveronOk, loading,
 }) => {
   const { confirm } = Modal;
   const [formData] = Form.useForm();
-  const amountETH = projectAmount ? formatEther(projectAmount) : 0;
-  const targetAmountETH = targetAmount ? formatEther(targetAmount) : 0;
-  const percent = projectAmount && targetAmount ? Number(calculateRatio(projectAmount, targetAmount)) * 100 : 0;
+
   const showConfirm = () => {
     formData
       .validateFields()
@@ -64,18 +53,6 @@ const Inverment: React.FC<InvermentProps> = ({
         size="large"
         style={{ width: 640 }}
       >
-        <Form.Item label="Progress of crowdfunding" name="amount">
-          <Progress
-            type="circle"
-            percent={percent}
-            strokeColor="#97D44A"
-            trailColor="white"
-            size={80}
-          />
-          <span className="ml-2">
-            {`${amountETH} / ${targetAmountETH}ETH`}
-          </span>
-        </Form.Item>
         <Form.Item
           label="investment amount"
           name="amount"
@@ -95,7 +72,7 @@ const Inverment: React.FC<InvermentProps> = ({
             }}
           >
             <InputNumber style={{ width: 200 }} />
-            <Button ghost className={styles.processBtn} onClick={showConfirm}>
+            <Button ghost className={styles.processBtn} loading={loading} onClick={showConfirm}>
               invest
             </Button>
           </div>

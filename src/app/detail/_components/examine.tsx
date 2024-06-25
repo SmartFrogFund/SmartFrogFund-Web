@@ -10,8 +10,8 @@ type examineDataType ={
 }
 interface examineProps {
   title: string;
-  progressRevieweds:Array<any>;
   percent:number;
+  loading:boolean;
   examineOk:(data:examineDataType)=>void
 }
 
@@ -38,29 +38,15 @@ const convertTimestampToLocalTime = (timestamp:string) => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 const Inverment: React.FC<examineProps> = ({
-  title, progressRevieweds, examineOk, percent,
+  title, examineOk, percent, loading,
 }) => {
   const { confirm } = Modal;
-  console.log(progressRevieweds, "progressRevieweds");
-  const newProgressRevieweds = progressRevieweds
-    .filter((item) => item.currentProgress === String(30))
-    .map((item) => ({
-      ...item,
-      time: convertTimestampToLocalTime(item.blockTimestamp),
-      key: item.id,
-    }));
-
-  console.log(newProgressRevieweds, "newProgressReviewedsnewProgressRevieweds");
   const [formData] = Form.useForm();
-  const [modal, setModal] = useState(false);
-
-  console.log(convertTimestampToLocalTime("1719215421"), "convertTimestampToLocalTim");
-
   console.log(percent, "percentpercent");
   const agreeCB = () => {
     confirm({
       title: "Examine",
-      content: "AConfirm submission",
+      content: "Confirm submission",
       onOk() {
         formData.validateFields().then((values) => {
           console.log("OK", values);
@@ -72,13 +58,6 @@ const Inverment: React.FC<examineProps> = ({
       },
     });
   };
-
-  const showModal = () => {
-    setModal(true);
-  };
-  const onCancel = () => {
-    setModal(false);
-  };
   const options = [
     { label: "Yes", value: true },
     { label: "No", value: false },
@@ -88,35 +67,6 @@ const Inverment: React.FC<examineProps> = ({
     auditOpinion: "",
   };
 
-  const columns: TableColumnsType<DataType> = [
-    {
-      title: "Investor",
-      dataIndex: "Investor",
-      width: 250,
-    },
-    {
-      title: "comment",
-      dataIndex: "comment",
-      width: 250,
-    },
-    {
-      title: "approved",
-      dataIndex: "approved",
-      width: 150,
-      render: (_, { approved }) => (
-        <Tag color={approved ? "green" : "volcano"}>
-          {approved ? "Approved" : "Not Approved"}
-        </Tag>
-      ),
-    },
-    {
-      title: "time",
-      dataIndex: "time",
-      width: 200,
-    },
-  ];
-
-  const data: DataType[] = newProgressRevieweds;
   return (
     <div className="flex justify-center items-center flex-col">
       <div className={styles.title} style={{ marginTop: 20, marginBottom: 0 }}>{title}</div>
@@ -130,18 +80,6 @@ const Inverment: React.FC<examineProps> = ({
         size="large"
         style={{ width: 640 }}
       >
-        <Form.Item
-          label="Audit information"
-          style={{ textAlign: "right" }}
-        >
-          <Button
-            ghost
-            className={styles.processBtn}
-            onClick={showModal}
-          >
-            Detail
-          </Button>
-        </Form.Item>
         <Form.Item
           label="Be approved or not"
           name="approved"
@@ -169,23 +107,13 @@ const Inverment: React.FC<examineProps> = ({
           <Button
             type="primary"
             onClick={agreeCB}
+            loading={loading}
             style={{ backgroundColor: "#97D44A" }}
           >
             submit
           </Button>
         </Form.Item>
       </Form>
-
-      <Modal
-        title="Audit information"
-        className={`${styles.container} stepModal`}
-        open={modal}
-        width={900}
-        onCancel={onCancel}
-        footer={null}
-      >
-        <Table columns={columns} dataSource={data} scroll={{ y: 240 }} />
-      </Modal>
     </div>
   );
 };

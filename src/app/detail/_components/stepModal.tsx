@@ -10,13 +10,14 @@ interface StepModalProps {
   isInvestors:boolean;
   isModalOpen: boolean;
   initialData: any;
+  loading:boolean;
   onOk: (data: any) => void;
   onCancel: () => void;
 }
 const placeholder = "1.what to do\n2.\n3.\n..."; // 使用换行符
 
 const StepModal: React.FC<StepModalProps> = ({
-  isModalOpen, initialData, onOk, onCancel, isInvestors, percent,
+  isModalOpen, initialData, onOk, onCancel, isInvestors, percent, loading,
 }) => {
   const [modalForm] = Form.useForm();
 
@@ -68,7 +69,7 @@ const StepModal: React.FC<StepModalProps> = ({
         </Form.Item>
         {!isInvestors ? (
           <Form.Item style={{ textAlign: "right" }}>
-            <Button type="primary" htmlType="submit" size="large" style={{ backgroundColor: "#97D44A" }}>
+            <Button type="primary" htmlType="submit" loading={loading} size="large" style={{ backgroundColor: "#97D44A" }}>
               submit
             </Button>
           </Form.Item>

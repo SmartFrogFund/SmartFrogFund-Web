@@ -26,6 +26,7 @@ import {
 } from "antd";
 import { DetailData } from "@/app/detail/_interface/detail";
 import StepModal from "./_components/stepModal";
+import ExamineModal from "./_components/examineModal";
 import Inverment from "./_components/inverment";
 import Examine from "./_components/examine";
 import Loading from "../lodaing";
@@ -81,8 +82,9 @@ const DetailPage: React.FC = () => {
   // 非创建人(投资人->已投资或潜在投资)
   const [isInvestors, setIsInvestors] = useState(false);
   // 项目是否已经达到众筹目标
+  const [isreachGoal, setIsReachGoal] = useState(false);
+  // 判断用户是否投资过
   const [hasInvest, setHasInvest] = useState(false);
-
   // 当前项目众筹金额
   const [projectAmount, setProjectAmount] = useState<bigint | undefined>(undefined);
   // 当前项目目标金额
@@ -101,6 +103,26 @@ const DetailPage: React.FC = () => {
 
   const [graphLoading, setGraphLoading] = useState(false);
 
+  // 项目投资进度
+  const formatToTwoDecimalPlaces = (value: number): string => value.toFixed(2);
+  const calculateRatio = (amountETH: bigint, targetAmountETH: bigint): string => {
+    const amount = Number(amountETH);
+    const targetAmountInCB = Number(targetAmountETH);
+    const ratio = amount / targetAmountInCB;
+    return formatToTwoDecimalPlaces(ratio);
+  };
+  const amountETH = projectAmount ? formatEther(projectAmount) : 0;
+  const targetAmountETH = targetAmount ? formatEther(targetAmount) : 0;
+  const ivermentPercent = projectAmount && targetAmount ? Number(calculateRatio(projectAmount, targetAmount)) * 100 : 0;
+
+  // 审核弹框
+  const [showExamineListModal, setShowExamineListModal] = useState(false);
+  const showExamineList = () => {
+    setShowExamineListModal(true);
+  };
+  const closeExamineListModal = () => {
+    setShowExamineListModal(false);
+  };
   // 时间格式处理
 
   const disabledDate = (current: any) => {
@@ -278,29 +300,6 @@ const DetailPage: React.FC = () => {
     };
   };
 
-  const getLink = () => {
-    const text = formData.getFieldValue("projectLink");
-    console.log(text, "texttext");
-    if (navigator.clipboard) {
-      // clipboard api 复制
-      navigator.clipboard.writeText(text);
-    } else {
-      const textarea = document.createElement("textarea");
-      document.body.appendChild(textarea);
-      // 隐藏此输入框
-      textarea.style.position = "fixed";
-      textarea.style.clip = "rect(0 0 0 0)";
-      textarea.style.top = "10px";
-      // 赋值
-      textarea.value = text;
-      // 选中
-      textarea.select();
-      // 复制
-      document.execCommand("copy", true);
-      // 移除输入框
-      document.body.removeChild(textarea);
-    }
-  };
   useEffect(() => {
     if (projectId) {
       setGraphLoading(true);
@@ -329,7 +328,6 @@ const DetailPage: React.FC = () => {
         // const creatorAddress = "0x90F79bf6EB2c4f870365E785982E1f101E93b906";
         console.log(toLowerCaseEthereumAddress(address) !== creatorAddress, "address !== creatorAddress");
         if (toLowerCaseEthereumAddress(address) !== creatorAddress) setIsInvestors(true);
-        console.log(isInvestors, "isInvestors");
         const fetchedData = {
           projectName,
           projectDescription: formInfo._description,
@@ -343,18 +341,23 @@ const DetailPage: React.FC = () => {
       // 获取进度信息
       const { currentPercent, detailObj } = getPercentInfo(detailData);
       console.log(currentPercent, detailObj, "currentPercent");
-      setPercent(currentPercent);
       setProcessForm(detailObj);
 
       // 投资信息
       if (detailData.progressRevieweds && detailData.progressRevieweds.length) {
         setProgressRevieweds(detailData.progressRevieweds);
+
+        const result = detailData.progressRevieweds.find((item) => item.Investor === toLowerCaseEthereumAddress(address));
+        if (result) setHasInvest(true);
       }
     }
     if (projectsData && projectId) {
       setProjectAmount(projectsData[5]);
       setTargetAmount(projectsData[4]);
-      setHasInvest(projectsData[8]);
+      setIsReachGoal(projectsData[8]);
+
+      const currentPercent = parseInt(projectsData[9], 10);
+      setPercent(currentPercent);
     }
   }, [projectId, detailsRes, projectsData]);
 
@@ -370,9 +373,7 @@ const DetailPage: React.FC = () => {
       {contextHolder}
       <Form
         disabled={isInvestors}
-        className={`${styles.formBox} detailFrom ${
-          isInvestors ? `${styles.isInvestors}` : ""
-        }`}
+        className={`${styles.formBox} detailFrom`}
         labelCol={{ span: 7 }}
         wrapperCol={{ span: 24 }}
         layout="horizontal"
@@ -445,6 +446,7 @@ const DetailPage: React.FC = () => {
           <Form.Item style={{ textAlign: "right" }}>
             <Button
               type="primary"
+              loading={isPending}
               htmlType="submit"
               style={{ backgroundColor: "#97D44A" }}
             >
@@ -454,6 +456,41 @@ const DetailPage: React.FC = () => {
         ) : (
           ""
         )}
+
+        {
+          isEditing ? (
+            <Form.Item label="Progress of crowdfunding">
+              <Progress
+                type="circle"
+                percent={ivermentPercent}
+                strokeColor="#97D44A"
+                trailColor="white"
+                size={60}
+              />
+              <span className="ml-2">
+                {`${amountETH} / ${targetAmountETH}ETH`}
+              </span>
+            </Form.Item>
+          ) : ""
+        }
+
+        {
+          isEditing ? (
+            <Form.Item
+              label="Audit information"
+              style={{ textAlign: "right" }}
+            >
+              <Button
+                ghost
+                disabled={false}
+                className={styles.processBtn}
+                onClick={showExamineList}
+              >
+                Detail
+              </Button>
+            </Form.Item>
+          ) : ""
+        }
 
         {
          isEditing ? (
@@ -492,28 +529,38 @@ const DetailPage: React.FC = () => {
         percent={percent}
         isInvestors={isInvestors}
         isModalOpen={isModalOpen}
+        loading={isPending}
+
         initialData={processForm}
         onOk={handleOk}
         onCancel={handleCancel}
       />
-
+      <ExamineModal
+        progressRevieweds={progressRevieweds}
+        showModal={showExamineListModal}
+        onCancel={closeExamineListModal}
+      />
       {
-      isInvestors && !hasInvest
+      isInvestors && !isreachGoal
       // true ?
         ? (
           <Inverment
             title={comTitle().title2}
+            loading={isPending}
             inveronOk={inveronOk}
-            targetAmount={targetAmount}
-            projectAmount={projectAmount}
           />
         ) : (
           ""
         )
       }
 
-      {isInvestors && hasInvest ? (
-        <Examine title={comTitle().title2} percent={percent} progressRevieweds={progressRevieweds} examineOk={examineOk} />
+      {isInvestors && isreachGoal && hasInvest ? (
+        <Examine
+          title={comTitle().title2}
+          loading={isPending}
+          percent={percent}
+          examineOk={examineOk}
+        />
       ) : (
         ""
       )}

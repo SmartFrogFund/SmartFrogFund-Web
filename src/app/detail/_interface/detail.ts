@@ -21,7 +21,8 @@ export interface progressReviewed {
     approved:string;
     blockTimestamp:string;
     currentProgress:string;
-    comment:string
+    comment:string;
+    Investor:string;
     // other fields...
 }
 
