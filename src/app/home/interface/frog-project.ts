@@ -22,3 +22,5 @@ export interface IFundedItem {
   transactionHash: string;
   id: string
 }
+
+export type ITabs = "ALL" | "MY_PROJECT" | "MY_FUND"

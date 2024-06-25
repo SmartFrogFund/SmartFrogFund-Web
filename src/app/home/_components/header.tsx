@@ -8,7 +8,7 @@ import { useAccount } from "wagmi";
 import { formatEther } from "viem";
 import { abbreviateNumber } from "@/utils/formatAmount";
 import meme from "@/public/images/tokenomics.png";
-import '@/styles/custom-header.css'
+import "@/styles/custom-header.css";
 
 function Header() {
   const { address } = useAccount();
