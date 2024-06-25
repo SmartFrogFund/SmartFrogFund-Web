@@ -260,7 +260,7 @@ const DetailPage: React.FC = () => {
         title = "Project info";
         if (hasInvest) {
           // 审核组件
-          title2 = `Project progress increased from ${percent}% to ${stepToPercent.get(nexrPercent + 1)}%`;
+          title2 = `Project progress ${percent}% `;
         } else {
           // 投资组件
           title2 = "Investment information";
@@ -278,6 +278,29 @@ const DetailPage: React.FC = () => {
     };
   };
 
+  const getLink = () => {
+    const text = formData.getFieldValue("projectLink");
+    console.log(text, "texttext");
+    if (navigator.clipboard) {
+      // clipboard api 复制
+      navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement("textarea");
+      document.body.appendChild(textarea);
+      // 隐藏此输入框
+      textarea.style.position = "fixed";
+      textarea.style.clip = "rect(0 0 0 0)";
+      textarea.style.top = "10px";
+      // 赋值
+      textarea.value = text;
+      // 选中
+      textarea.select();
+      // 复制
+      document.execCommand("copy", true);
+      // 移除输入框
+      document.body.removeChild(textarea);
+    }
+  };
   useEffect(() => {
     if (projectId) {
       setGraphLoading(true);
@@ -387,7 +410,9 @@ const DetailPage: React.FC = () => {
             { required: true, message: "Please input the project link!" },
           ]}
         >
+
           <Input addonBefore="https://" disabled={isEditing} />
+
         </Form.Item>
         <Form.Item
           label="Project Need ETH"

@@ -112,14 +112,14 @@ const Inverment: React.FC<examineProps> = ({
     {
       title: "time",
       dataIndex: "time",
-      width: 150,
+      width: 200,
     },
   ];
 
   const data: DataType[] = newProgressRevieweds;
   return (
     <div className="flex justify-center items-center flex-col">
-      <div className={styles.title}>{title}</div>
+      <div className={styles.title} style={{ marginTop: 20, marginBottom: 0 }}>{title}</div>
       <Form
         className={`${styles.formBox} detailFrom`}
         labelCol={{ span: 7 }}
@@ -180,7 +180,7 @@ const Inverment: React.FC<examineProps> = ({
         title="Audit information"
         className={`${styles.container} stepModal`}
         open={modal}
-        width={800}
+        width={900}
         onCancel={onCancel}
         footer={null}
       >
