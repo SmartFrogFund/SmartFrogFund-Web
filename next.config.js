@@ -2,6 +2,7 @@
 const path = require("path");
 
 const nextConfig = {
+  output: "export",
   transpilePackages: ["react-syntax-highlighter", "swagger-client", "swagger-ui-react"],
   reactStrictMode: false,
   eslint: {
