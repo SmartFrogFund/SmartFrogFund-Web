@@ -23,7 +23,8 @@
 
 /* step弹框 */
 .stepModal{
-  top: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%)  !important;
 background-color: transparent !important;
 }
 .stepModal .ant-modal-content{
