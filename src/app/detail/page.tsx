@@ -366,14 +366,13 @@ const {
       // 审核信息
       if (detailData.progressRevieweds && detailData.progressRevieweds.length) {
         setProgressRevieweds(detailData.progressRevieweds);
-
-        const result = detailData.progressRevieweds.find((item) => item.Investor === toLowerCaseEthereumAddress(address));
-        if (result) setHasInvest(true);
       }
 
       // 投资信息
       if (detailData.projectFundeds && detailData.projectFundeds.length) {
         setprojectFundeds(detailData.projectFundeds);
+        const result = detailData.projectFundeds.find((item) => item.supporter === toLowerCaseEthereumAddress(address));
+        if (result) setHasInvest(true);
       }
     }
     if (projectsData && projectId) {
@@ -518,6 +517,23 @@ const {
         }
 
         {
+          isEditing ? (
+            <Form.Item
+              label="Audit information"
+              style={{ textAlign: "right" }}
+            >
+              <Button
+                ghost
+                disabled={false}
+                className={styles.processBtn}
+                onClick={showExamineList}
+              >
+                Detail
+              </Button>
+            </Form.Item>
+          ) : ""
+        }
+        {
          isEditing ? (
            <Form.Item label="Project progress" name="projectProcessDetail">
              <div
@@ -548,24 +564,6 @@ const {
            </Form.Item>
          ) : ""
       }
-
-        {
-          isEditing ? (
-            <Form.Item
-              label="Audit information"
-              style={{ textAlign: "right" }}
-            >
-              <Button
-                ghost
-                disabled={false}
-                className={styles.processBtn}
-                onClick={showExamineList}
-              >
-                Detail
-              </Button>
-            </Form.Item>
-          ) : ""
-        }
       </Form>
 
       <StepModal

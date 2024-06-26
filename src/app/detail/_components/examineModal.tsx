@@ -37,7 +37,6 @@ const ExamineModal: React.FC<examineProps> = ({
 }) => {
   console.log(progressRevieweds, "progressRevieweds");
   const newProgressRevieweds = progressRevieweds
-    .filter((item) => item.currentProgress === String(30))
     .map((item) => ({
       ...item,
       time: convertTimestampToLocalTime(item.blockTimestamp),
@@ -55,6 +54,16 @@ const ExamineModal: React.FC<examineProps> = ({
       title: "auditor",
       dataIndex: "Investor",
       width: 250,
+    },
+    {
+      title: "progress",
+      dataIndex: "currentProgress",
+      width: 150,
+      render: (_, { currentProgress }) => (
+        <span>
+          {`${currentProgress}%`}
+        </span>
+      ),
     },
     {
       title: "comment",
