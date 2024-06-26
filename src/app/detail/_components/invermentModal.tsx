@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import {
-  Modal, TableColumnsType, Table, Tag,
+  Modal, TableColumnsType, Table,
 } from "antd";
+import { formatEther } from "viem";
 import styles from "../../../styles/detail.module.scss";
 
-interface examineProps {
-  progressRevieweds:Array<any>;
+interface InvermentModalType {
+  projectFundeds:Array<any>;
   showModal:boolean;
   onCancel:()=>void;
 }
 
 interface DataType {
   key: React.Key;
-  approved: boolean;
-  comment: string;
+  amount: string;
+  amountETH:string;
   blockTimestamp: string;
-  currentProgress:string;
-  Investor:string;
+  time:string;
+  supporter:string;
 }
 const convertTimestampToLocalTime = (timestamp:string) => {
   // 将秒转换为毫秒
@@ -32,56 +33,44 @@ const convertTimestampToLocalTime = (timestamp:string) => {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
-const ExamineModal: React.FC<examineProps> = ({
-  progressRevieweds, showModal, onCancel,
+const InvermentModal: React.FC<InvermentModalType> = ({
+  projectFundeds, showModal, onCancel,
 }) => {
-  console.log(progressRevieweds, "progressRevieweds");
-  const newProgressRevieweds = progressRevieweds
-    .filter((item) => item.currentProgress === String(30))
-    .map((item) => ({
-      ...item,
-      time: convertTimestampToLocalTime(item.blockTimestamp),
-      key: item.id,
-    }));
+  console.log(projectFundeds, "progressRevieweds");
+  const newProjectFundeds = projectFundeds.map((item) => ({
+    ...item,
+    time: convertTimestampToLocalTime(item.blockTimestamp),
+    amountETH: formatEther(BigInt(item.amount)),
+    key: item.id,
+  }));
 
-  console.log(newProgressRevieweds, "newProgressReviewedsnewProgressRevieweds");
+  console.log(newProjectFundeds, "newProjectFundeds");
 
-  console.log(convertTimestampToLocalTime("1719215421"), "convertTimestampToLocalTim");
   const close = () => {
     onCancel();
   };
   const columns: TableColumnsType<DataType> = [
     {
-      title: "auditor",
-      dataIndex: "Investor",
+      title: "supporter",
+      dataIndex: "supporter",
       width: 250,
     },
     {
-      title: "comment",
-      dataIndex: "comment",
+      title: "amount(ETH)",
+      dataIndex: "amountETH",
       width: 250,
-    },
-    {
-      title: "approved",
-      dataIndex: "approved",
-      width: 150,
-      render: (_, { approved }) => (
-        <Tag color={approved ? "green" : "volcano"}>
-          {approved ? "Approved" : "Not Approved"}
-        </Tag>
-      ),
     },
     {
       title: "time",
       dataIndex: "time",
-      width: 200,
+      width: 250,
     },
   ];
 
-  const data: DataType[] = newProgressRevieweds;
+  const data: DataType[] = newProjectFundeds;
   return (
     <Modal
-      title="Audit information"
+      title="Inverment information"
       className={`${styles.container} stepModal`}
       open={showModal}
       width={900}
@@ -93,4 +82,4 @@ const ExamineModal: React.FC<examineProps> = ({
   );
 };
 
-export default ExamineModal;
+export default InvermentModal;

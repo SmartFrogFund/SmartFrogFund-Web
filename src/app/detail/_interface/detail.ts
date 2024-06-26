@@ -28,6 +28,8 @@ export interface progressReviewed {
 
 export interface projectFunded{
     supporter:string
+    amount:string;
+    blockTimestamp:string;
 }
 
 export interface DetailData {

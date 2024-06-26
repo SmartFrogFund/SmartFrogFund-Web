@@ -27,6 +27,7 @@ import {
 import { DetailData } from "@/app/detail/_interface/detail";
 import StepModal from "./_components/stepModal";
 import ExamineModal from "./_components/examineModal";
+import InvermentModal from "./_components/invermentModal";
 import Inverment from "./_components/inverment";
 import Examine from "./_components/examine";
 import Loading from "../lodaing";
@@ -95,52 +96,71 @@ const DetailPage: React.FC = () => {
     approved:string;
     blockTimestamp:string;
     currentProgress:string;
-    comment:string
+    comment:string;
+    Investor: string;
     // 其他字段
   };
-  // 审核信息数组
-  const [progressRevieweds, setProgressRevieweds] = useState<ProgressReviewed[]>([]);
 
-  const [graphLoading, setGraphLoading] = useState(false);
+type projectFunded = {
+    supporter:string
+    amount:string;
+    blockTimestamp:string;
+}
+// 审核信息数组
+const [progressRevieweds, setProgressRevieweds] = useState<ProgressReviewed[]>([]);
 
-  // 项目投资进度
-  const formatToTwoDecimalPlaces = (value: number): string => value.toFixed(2);
-  const calculateRatio = (amountETH: bigint, targetAmountETH: bigint): string => {
-    const amount = Number(amountETH);
-    const targetAmountInCB = Number(targetAmountETH);
-    const ratio = amount / targetAmountInCB;
-    return formatToTwoDecimalPlaces(ratio);
-  };
-  const amountETH = projectAmount ? formatEther(projectAmount) : 0;
-  const targetAmountETH = targetAmount ? formatEther(targetAmount) : 0;
-  const ivermentPercent = projectAmount && targetAmount ? Number(calculateRatio(projectAmount, targetAmount)) * 100 : 0;
+// 投资信息组
+const [projectFundeds, setprojectFundeds] = useState<projectFunded[]>([]);
 
-  // 审核弹框
-  const [showExamineListModal, setShowExamineListModal] = useState(false);
-  const showExamineList = () => {
-    setShowExamineListModal(true);
-  };
-  const closeExamineListModal = () => {
-    setShowExamineListModal(false);
-  };
+const [graphLoading, setGraphLoading] = useState(false);
+
+// 项目投资进度
+const formatToTwoDecimalPlaces = (value: number): string => value.toFixed(2);
+const calculateRatio = (amountETH: bigint, targetAmountETH: bigint): string => {
+  const amount = Number(amountETH);
+  const targetAmountInCB = Number(targetAmountETH);
+  const ratio = amount / targetAmountInCB;
+  return formatToTwoDecimalPlaces(ratio);
+};
+const amountETH = projectAmount ? formatEther(projectAmount) : 0;
+const targetAmountETH = targetAmount ? formatEther(targetAmount) : 0;
+const ivermentPercent = projectAmount && targetAmount ? Number(calculateRatio(projectAmount, targetAmount)) * 100 : 0;
+
+// 审核列表弹框
+const [showExamineListModal, setShowExamineListModal] = useState(false);
+const showExamineList = () => {
+  setShowExamineListModal(true);
+};
+const closeExamineListModal = () => {
+  setShowExamineListModal(false);
+};
+
+// 投资列表弹框
+const [showInvermentListModal, setshowInvermentListModal] = useState(false);
+const showInvermentList = () => {
+  setshowInvermentListModal(true);
+};
+const closeInvermentListModal = () => {
+  setshowInvermentListModal(false);
+};
   // 时间格式处理
 
-  const disabledDate = (current: any) => {
-    // 将 current 转换为 dayjs 对象，如果 current 为空，则返回 true，即禁用
-    const currentDayjs = current ? dayjs(current) : null;
+const disabledDate = (current: any) => {
+  // 将 current 转换为 dayjs 对象，如果 current 为空，则返回 true，即禁用
+  const currentDayjs = current ? dayjs(current) : null;
 
-    // 获取当前时间的 dayjs 对象，并将精度缩小到分钟
-    const now = dayjs().second(0).millisecond(0);
+  // 获取当前时间的 dayjs 对象，并将精度缩小到分钟
+  const now = dayjs().second(0).millisecond(0);
 
-    // 如果 currentDayjs 存在且在当前时间之前，则禁用
-    return !!(currentDayjs && currentDayjs.isBefore(now));
-  };
-  const query = Object.fromEntries(useSearchParams().entries());
-  const {
-    projectId,
-  } = query;
+  // 如果 currentDayjs 存在且在当前时间之前，则禁用
+  return !!(currentDayjs && currentDayjs.isBefore(now));
+};
+const query = Object.fromEntries(useSearchParams().entries());
+const {
+  projectId,
+} = query;
 
-  // 审核回调
+// 审核回调
 
   type examineDataType ={
     comment:string,
@@ -214,7 +234,7 @@ const DetailPage: React.FC = () => {
       fundsDistributeds(where:{projectId: ${projectId}}) {   id  projectId    amount  blockTimestamp  }
       progressUpdateds (where:{projectId: ${projectId}}){   id   projectId   progress    details    blockTimestamp  }
       progressRevieweds(where:{projectId: ${projectId}}) {    id    projectId    approved comment Investor  blockTimestamp currentProgress  }
-      projectFundeds(where:{projectId: ${projectId}}) {    supporter  }
+      projectFundeds(where:{projectId: ${projectId}}) {  id  supporter amount blockTimestamp }
       }`,
     // query: `{
     //   projectCreateds {    id    projectId    creator    goalAmount    deadline _title   _description    _link    blockTimestamp  }
@@ -343,12 +363,17 @@ const DetailPage: React.FC = () => {
       console.log(currentPercent, detailObj, "currentPercent");
       setProcessForm(detailObj);
 
-      // 投资信息
+      // 审核信息
       if (detailData.progressRevieweds && detailData.progressRevieweds.length) {
         setProgressRevieweds(detailData.progressRevieweds);
 
         const result = detailData.progressRevieweds.find((item) => item.Investor === toLowerCaseEthereumAddress(address));
         if (result) setHasInvest(true);
+      }
+
+      // 投资信息
+      if (detailData.projectFundeds && detailData.projectFundeds.length) {
+        setprojectFundeds(detailData.projectFundeds);
       }
     }
     if (projectsData && projectId) {
@@ -477,14 +502,14 @@ const DetailPage: React.FC = () => {
         {
           isEditing ? (
             <Form.Item
-              label="Audit information"
+              label="Inverment information"
               style={{ textAlign: "right" }}
             >
               <Button
                 ghost
                 disabled={false}
                 className={styles.processBtn}
-                onClick={showExamineList}
+                onClick={showInvermentList}
               >
                 Detail
               </Button>
@@ -523,6 +548,24 @@ const DetailPage: React.FC = () => {
            </Form.Item>
          ) : ""
       }
+
+        {
+          isEditing ? (
+            <Form.Item
+              label="Audit information"
+              style={{ textAlign: "right" }}
+            >
+              <Button
+                ghost
+                disabled={false}
+                className={styles.processBtn}
+                onClick={showExamineList}
+              >
+                Detail
+              </Button>
+            </Form.Item>
+          ) : ""
+        }
       </Form>
 
       <StepModal
@@ -539,6 +582,11 @@ const DetailPage: React.FC = () => {
         progressRevieweds={progressRevieweds}
         showModal={showExamineListModal}
         onCancel={closeExamineListModal}
+      />
+      <InvermentModal
+        projectFundeds={projectFundeds}
+        showModal={showInvermentListModal}
+        onCancel={closeInvermentListModal}
       />
       {
       isInvestors && !isreachGoal
