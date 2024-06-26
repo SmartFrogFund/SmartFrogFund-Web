@@ -299,13 +299,13 @@ const {
     const nexrPercent = percentToStep.get(percent) ?? 0; // Provide a default value of 0 if undefined
     if (projectId) {
       if (isInvestors) {
-        title = "Project info";
+        title = "Project Info";
         if (hasInvest) {
           // 审核组件
-          title2 = `Project progress ${percent}% `;
+          title2 = `Current Project Progress Review ${percent}% `;
         } else {
           // 投资组件
-          title2 = "Investment information";
+          title2 = "Investment Information";
         }
       } else {
         title = "Progress Update";
@@ -399,7 +399,7 @@ const {
       <Form
         disabled={isInvestors}
         className={`${styles.formBox} detailFrom`}
-        labelCol={{ span: 7 }}
+        labelCol={{ span: 9 }}
         wrapperCol={{ span: 24 }}
         layout="horizontal"
         form={formData}
@@ -441,7 +441,7 @@ const {
 
         </Form.Item>
         <Form.Item
-          label="Project Need ETH"
+          label="Project Need Amount (ETH)"
           name="projectNeedETH"
           rules={[
             {
@@ -484,7 +484,7 @@ const {
 
         {
           isEditing ? (
-            <Form.Item label="Progress of crowdfunding">
+            <Form.Item label="Progress of Crowdfunding">
               <Progress
                 type="circle"
                 percent={ivermentPercent}
@@ -502,7 +502,7 @@ const {
         {
           isEditing ? (
             <Form.Item
-              label="Inverment information"
+              label="Inverment Information"
               style={{ textAlign: "right" }}
             >
               <Button
@@ -519,7 +519,7 @@ const {
 
         {
          isEditing ? (
-           <Form.Item label="Project progress" name="projectProcessDetail">
+           <Form.Item label="Project Progress" name="projectProcessDetail">
              <div
                style={{
                  display: "flex",
@@ -552,7 +552,7 @@ const {
         {
           isEditing ? (
             <Form.Item
-              label="Audit information"
+              label="Audit Information"
               style={{ textAlign: "right" }}
             >
               <Button
