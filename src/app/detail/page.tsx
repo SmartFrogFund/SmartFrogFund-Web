@@ -86,6 +86,9 @@ const DetailPage: React.FC = () => {
   const [isreachGoal, setIsReachGoal] = useState(false);
   // 判断用户是否投资过
   const [hasInvest, setHasInvest] = useState(false);
+  // 判断用户是否已经在此进度审核过项目
+  const [hasCurrentPercentExamine, setHasCurrentPercentExamine] = useState(false);
+
   // 当前项目众筹金额
   const [projectAmount, setProjectAmount] = useState<bigint | undefined>(undefined);
   // 当前项目目标金额
@@ -385,6 +388,15 @@ const {
     }
   }, [projectId, detailsRes, projectsData]);
 
+  useEffect(() => {
+    const examineAddress = toLowerCaseEthereumAddress(address);
+    const currentPercentArr = progressRevieweds.filter((item) => item.currentProgress === String(percent));
+    if (currentPercentArr.length) {
+      const result = currentPercentArr.find((item) => item.Investor === examineAddress);
+      if (result) setHasCurrentPercentExamine(true);
+    }
+  }, [percent, progressRevieweds]);
+
   return (
     <div className={`${styles.container} mt-10 `}>
       {
@@ -600,7 +612,7 @@ const {
         )
       }
 
-      {isInvestors && isreachGoal && hasInvest ? (
+      {isInvestors && isreachGoal && hasInvest && !hasCurrentPercentExamine ? (
         <Examine
           title={comTitle().title2}
           loading={isPending}
