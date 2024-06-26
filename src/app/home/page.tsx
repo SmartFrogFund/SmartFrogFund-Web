@@ -55,12 +55,12 @@ function HomePage() {
   const myFundedProjectIds: Array<string> = [];
   if (isLogged) {
     fundedList.forEach((item) => {
-      if (item.supporter === address) {
+      if (item.supporter === address?.toLocaleLowerCase()) {
         myFundedProjectIds.push(item.projectId);
       }
     });
     projectList.forEach((item) => {
-      if (item.creator === address) myProjects.push(item);
+      if (item.creator === address?.toLocaleLowerCase()) myProjects.push(item);
       if (myFundedProjectIds.includes(item.projectId)) myFundedProjects.push(item);
     });
   }
