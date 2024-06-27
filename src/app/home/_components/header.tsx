@@ -30,7 +30,8 @@ function Header() {
     <div className="sticky top-0 z-40 w-full bg-[#0F030F] h-[65px] custom-shadow bg-opacity-75 backdrop-filter">
       <div className="h-full max-w-screen-md m-auto flex flex-row items-center justify-center justify-between text-white">
         <Link href="/home" className="font-bold text-3xl">
-          FrogFund
+          Frog
+          <span className="text-[#4caf50]">Fund</span>
         </Link>
         <p className="font-bold text-[100%] flex justify-center items-center">
           My $CROAK Rewards:
