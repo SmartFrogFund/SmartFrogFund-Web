@@ -24,9 +24,7 @@ const percentToStepName = new Map([
 ]);
 
 export const usePercentInfo = () => {
-  const getPercentInfo = (data:DetailData) => {
-    const { progressUpdateds } = data;
-    const { progressRevieweds } = data;
+  const getPercentInfo = (progressUpdateds:progressUpdated[], percent:number) => {
     const percentList = [30, 50, 70, 100];
     const detailObj: {
         Step1: string;
@@ -40,23 +38,23 @@ export const usePercentInfo = () => {
       Step3: "",
       Step4: "",
     };
-    let percent:number|undefined = 0;
-    let examineDeatil = "";
-    let newProgressRevieweds = [];
-    let newProgressUpdateds: any[] = [];
-    if (progressRevieweds?.length) {
-      newProgressRevieweds = progressRevieweds.map((item) => ({
-        blockTimestamp: Number(item.blockTimestamp),
-        currentProgress: Number(item.currentProgress),
-      }));
-      percent = findObjectWithMaxTimestamp(newProgressRevieweds)?.currentProgress;
-    } else if (progressUpdateds?.length) {
-      newProgressUpdateds = progressUpdateds.map((item) => ({
-        blockTimestamp: Number(item.blockTimestamp),
-        currentProgress: Number(item.progress),
-      }));
-      percent = findObjectWithMaxTimestamp(newProgressUpdateds)?.currentProgress;
-    }
+    // let percent:number|undefined = 0;
+    // let examineDeatil = "";
+    // let newProgressRevieweds = [];
+    // let newProgressUpdateds: any[] = [];
+    // if (progressRevieweds?.length) {
+    //   newProgressRevieweds = progressRevieweds.map((item) => ({
+    //     blockTimestamp: Number(item.blockTimestamp),
+    //     currentProgress: Number(item.currentProgress),
+    //   }));
+    //   percent = findObjectWithMaxTimestamp(newProgressRevieweds)?.currentProgress;
+    // } else if (progressUpdateds?.length) {
+    //   newProgressUpdateds = progressUpdateds.map((item) => ({
+    //     blockTimestamp: Number(item.blockTimestamp),
+    //     currentProgress: Number(item.progress),
+    //   }));
+    //   percent = findObjectWithMaxTimestamp(newProgressUpdateds)?.currentProgress;
+    // }
     if (percent) {
       const currentPercentList = percentList.filter((item) => item <= percent);
       currentPercentList.forEach((item) => {
@@ -69,12 +67,9 @@ export const usePercentInfo = () => {
       const nextPercent = percentList[percentList.indexOf(percent) + 1];
       const stepKey = percentToStepName.get(nextPercent);
       console.log(nextPercent, stepKey, "nextPercent");
-      examineDeatil = stepKey ? detailObj[stepKey] : "";
     }
     return {
-      currentPercent: percent || 0,
       detailObj,
-      examineDeatil,
     };
   };
 

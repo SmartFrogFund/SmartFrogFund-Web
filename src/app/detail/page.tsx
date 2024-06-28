@@ -83,7 +83,7 @@ const DetailPage: React.FC = () => {
   // 非创建人(投资人->已投资或潜在投资)
   const [isInvestors, setIsInvestors] = useState(false);
   // 项目是否已经达到众筹目标
-  const [isreachGoal, setIsReachGoal] = useState(false);
+  const [isReachGoal, setIsReachGoal] = useState(false);
   // 判断用户是否投资过
   const [hasInvest, setHasInvest] = useState(false);
   // 判断用户是否已经在此进度审核过项目
@@ -109,8 +109,18 @@ type projectFunded = {
     amount:string;
     blockTimestamp:string;
 }
+type progressUpdated = {
+  projectId:string;
+    progress:string;
+    details:string;
+    blockTimestamp:string;
+    currentProgress:string;
+}
 // 审核信息数组
 const [progressRevieweds, setProgressRevieweds] = useState<ProgressReviewed[]>([]);
+
+// 更新信息组
+const [progressUpdateds, setProgressUpdateds] = useState<progressUpdated[]>([]);
 
 // 投资信息组
 const [projectFundeds, setprojectFundeds] = useState<projectFunded[]>([]);
@@ -361,14 +371,15 @@ const {
         formData.setFieldsValue(fetchedData);
         console.log(formData, "formData");
       }
-      // 获取进度信息
-      const { currentPercent, detailObj } = getPercentInfo(detailData);
-      console.log(currentPercent, detailObj, "currentPercent");
-      setProcessForm(detailObj);
 
       // 审核信息
       if (detailData.progressRevieweds && detailData.progressRevieweds.length) {
         setProgressRevieweds(detailData.progressRevieweds);
+      }
+
+      // 更新信息
+      if (detailData.progressUpdateds && detailData.progressUpdateds.length) {
+        setProgressUpdateds(detailData.progressUpdateds);
       }
 
       // 投资信息
@@ -396,6 +407,15 @@ const {
       if (result) setHasCurrentPercentExamine(true);
     }
   }, [percent, progressRevieweds]);
+
+  useEffect(() => {
+    // 获取进度信息
+    if (percent) {
+      const { detailObj } = getPercentInfo(progressUpdateds, percent);
+      console.log(detailObj, "detailObjdetailObj");
+      setProcessForm(detailObj);
+    }
+  }, [percent, progressUpdateds]);
 
   return (
     <div className={`${styles.container} mt-10 `}>
@@ -579,6 +599,7 @@ const {
       </Form>
 
       <StepModal
+        isReachGoal={isReachGoal}
         percent={percent}
         isInvestors={isInvestors}
         isModalOpen={isModalOpen}
@@ -599,7 +620,7 @@ const {
         onCancel={closeInvermentListModal}
       />
       {
-      isInvestors && !isreachGoal
+      isInvestors && !isReachGoal
       // true ?
         ? (
           <Inverment
@@ -612,7 +633,7 @@ const {
         )
       }
 
-      {isInvestors && isreachGoal && hasInvest && !hasCurrentPercentExamine ? (
+      {isInvestors && isReachGoal && hasInvest && !hasCurrentPercentExamine ? (
         <Examine
           title={comTitle().title2}
           loading={isPending}
