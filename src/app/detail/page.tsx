@@ -633,7 +633,7 @@ const {
         )
       }
 
-      {isInvestors && isReachGoal && hasInvest && !hasCurrentPercentExamine ? (
+      {isInvestors && isReachGoal && hasInvest && !hasCurrentPercentExamine && !!percent ? (
         <Examine
           title={comTitle().title2}
           loading={isPending}
