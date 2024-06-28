@@ -403,7 +403,8 @@ const {
     const examineAddress = toLowerCaseEthereumAddress(address);
     const currentPercentArr = progressRevieweds.filter((item) => item.currentProgress === String(percent));
     if (currentPercentArr.length) {
-      const result = currentPercentArr.find((item) => item.Investor === examineAddress);
+      const result = currentPercentArr.find((item) => item.Investor === examineAddress && item.approved);
+      console.log(result, "resultresultbug");
       if (result) setHasCurrentPercentExamine(true);
     }
   }, [percent, progressRevieweds]);

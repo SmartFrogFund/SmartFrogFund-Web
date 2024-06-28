@@ -67,7 +67,7 @@ const StepModal: React.FC<StepModalProps> = ({
         <Form.Item label="Step4(100%):" name="Step4">
           <Input.TextArea rows={4} placeholder={placeholder} disabled={(percent >= 100 || percent < 70) || isInvestors || !isReachGoal} />
         </Form.Item>
-        {!isInvestors && isReachGoal ? (
+        {!isInvestors && isReachGoal && percent < 100 ? (
           <Form.Item style={{ textAlign: "right" }}>
             <Button type="primary" htmlType="submit" loading={loading} size="large" style={{ backgroundColor: "#97D44A" }}>
               submit
