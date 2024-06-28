@@ -1,7 +1,8 @@
 
 /* 详情页 */
-.detailFrom input:disabled {
+.detailFrom input:disabled,textarea:disabled {
   background-color: #B5C5A4 !important;
+  color: #fff !important;
 }
 
 .detailFrom .ant-picker-disabled,.ant-input-disabled{
