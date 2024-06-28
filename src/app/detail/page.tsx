@@ -591,7 +591,7 @@ const {
                  onClick={showModal}
                  disabled={false}
                >
-                 {isInvestors ? "Detail" : "Next Step"}
+                 {isInvestors || (percent === 100) ? "Detail" : "Next Step"}
                </Button>
              </div>
            </Form.Item>
