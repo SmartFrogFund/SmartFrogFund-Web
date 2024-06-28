@@ -1,12 +1,12 @@
 import { defineChain } from "viem/utils";
 
 export const localChain = /* #__PURE__ */ defineChain({
-  id: 31337,
+  id: 1337,
   name: "hardhatTest",
-  nativeCurrency: { name: "GO", symbol: "GO", decimals: 18 },
+  nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
   rpcUrls: {
     default: {
-      http: ["http://42.192.203.239/hardhat"],
+      http: ["http://42.192.203.239/testChain"],
     },
   },
 
