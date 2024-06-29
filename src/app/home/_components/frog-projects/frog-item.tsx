@@ -1,6 +1,5 @@
 import React, { FC } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { formatEther } from "viem";
 import { IFrogItem } from "../../interface/frog-project";
 import SvgIconFrog from "../../../../public/images/logo-frog.svg";
@@ -8,9 +7,10 @@ import SvgIconCoin from "../../../../public/images/icon-coin.svg";
 
 interface IProps {
   frogData: IFrogItem;
+  onClick: (itemData: IFrogItem) => void;
 }
-const FrogItem: FC<IProps> = ({ frogData }) => (
-  <Link href={`/detail/?projectId=${frogData.projectId}`} className="bg-[#b8c4a7] rounded-md hover:bg-[#4caf50] cursor-pointer h-24">
+const FrogItem: FC<IProps> = ({ frogData, onClick }) => (
+  <button className="bg-[#b8c4a7] rounded-md hover:bg-[#4caf50] cursor-pointer h-24" onClick={() => onClick(frogData)}>
     <div className="flex">
       <Image
         className="w-8 h-8 rounded-md mt-3 ml-3"
@@ -35,7 +35,7 @@ const FrogItem: FC<IProps> = ({ frogData }) => (
         </div>
       </div>
     </div>
-  </Link>
+  </button>
 );
 
 export default FrogItem;

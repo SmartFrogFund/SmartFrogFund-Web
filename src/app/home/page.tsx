@@ -80,7 +80,7 @@ function HomePage() {
     >
       <Header />
       <ActionBar isLogged={isLogged} curTab={curTab} onChangeTab={handleChangeTab} />
-      <FrogProjects projectList={projectsData[curTab]} isLoading={loading} />
+      <FrogProjects projectList={projectsData[curTab]} isLoading={loading} isLogged={isLogged} />
     </div>
   );
 }
