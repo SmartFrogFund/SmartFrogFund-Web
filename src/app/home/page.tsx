@@ -71,7 +71,7 @@ function HomePage() {
   };
   return (
     <div
-      className="bg-[#0F030F] h-full text-white bg-no-repeat bg-fixed overflow-y-scroll"
+      className="bg-[#0F030F] h-full text-white bg-no-repeat bg-fixed overflow-y-auto"
       style={{
         backgroundImage: `url(${LogoBg.src})`,
         backgroundSize: "auto",

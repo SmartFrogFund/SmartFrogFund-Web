@@ -26,7 +26,7 @@ function WelcomePage() {
   };
 
   return (
-    <div className="bg-[#0F030F] h-full text-white overflow-y-scroll">
+    <div className="bg-[#0F030F] h-full text-white overflow-y-auto">
       <div className="max-w-screen-md m-auto flex flex-col items-center">
         <span className="text-3xl font-bold text-center mt-5 z-[2]">FrogFund</span>
         <div className="h-[5vh] z-[2]">
