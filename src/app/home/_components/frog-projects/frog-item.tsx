@@ -18,9 +18,9 @@ const FrogItem: FC<IProps> = ({ frogData, onClick }) => (
         alt="frog"
       />
       <div className="flex flex-col flex-auto p-3 overflow-hidden">
-        <div className="font-bold">{frogData._title}</div>
+        <div className="font-bold text-left">{frogData._title}</div>
         <div
-          className="truncate ... text-[#5B5B5B] text-sm"
+          className="truncate ... text-[#5B5B5B] text-sm text-left"
           title={frogData._description}
         >
           {frogData._description}
